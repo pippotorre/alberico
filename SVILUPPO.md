@@ -19,6 +19,9 @@ scuola secondaria di primo grado, per tutti i menu disponibili. L'utente può sa
 | 26/10/2026 | Stesso flusso di lavoro di Reserve: ramo → pull request → merge su `main` → deploy con GitHub Actions + `lftp`. Credenziali solo nei secrets di GitHub. |
 | 26/10/2026 | Fonte dei dati: i Google Calendar pubblici del Comune, letti direttamente dal server (non serve copiarli su un account personale). |
 | 26/10/2026 | Un «menu» è la coppia **fascia scolastica + dieta** (es. «Primaria – ordinario»). |
+| 26/10/2026 | Preferiti (massimo 2) salvati solo sul dispositivo: niente account, nessun dato personale. |
+| 26/10/2026 | L'elenco dei calendari sta in un solo file (`src/Calendari.php`); l'importatore riallinea il database da lì. |
+| 26/10/2026 | Un feed vuoto o non scaricabile non cancella i giorni già salvati; l'errore resta in `menu.ultimo_errore`. |
 
 ## Fonte dei dati
 
@@ -41,15 +44,21 @@ scuola secondaria di primo grado, per tutti i menu disponibili. L'utente può sa
 2ª e 3ª settimana del menu estivo; il **menu invernale parte dal 2 novembre**. I PDF invernali
 sono già online, i calendari non ancora.
 
-## Proposta di architettura (da confermare)
+## Architettura
 
-- **Importatore** (`cron` su Tophost, una volta al giorno): legge il feed iCal pubblico di ogni
+- **Importatore** (`php bin/importa.php`, una volta al giorno; cron su Tophost o GitHub Actions da decidere): legge il feed iCal pubblico di ogni
   calendario (`https://calendar.google.com/calendar/ical/<ID>%40group.calendar.google.com/public/basic.ics`)
   e aggiorna MySQL. Se il Comune corregge un piatto, l'app si aggiorna da sola.
-- **Dati:** `fasce` → `diete` → `menu` (fascia + dieta + ID calendario) → `giorni` (data + elenco piatti).
-- **API JSON** sotto `/api/v1/` come in Reserve, es. `GET /api/v1/menu/{id}/giorni?da=…&a=…`.
-- **PWA:** `manifest.json`, service worker con cache dell'ultima settimana (funziona anche offline),
-  preferiti salvati sul dispositivo (non serve registrarsi).
+- **Dati** (`migrations/001_schema.sql`): `fasce`, `diete`, `menu` (fascia + dieta + ID calendario),
+  `giorni` (data + piatti in JSON + testo originale).
+- **API JSON** sotto `/api/v1/` (`api/index.php` + `src/routes.php`, come in Reserve):
+  - `GET /api/v1/menu` → fasce con le loro diete e l'id di ogni menu;
+  - `GET /api/v1/menu/{id}/giorni?da=AAAA-MM-GG&a=AAAA-MM-GG` → piatti per giorno (predefinito: 14 giorni da oggi,
+    massimo 62), più `prossimo`, la prima data pubblicata dopo l'intervallo.
+- **PWA** (`index.html`, `js/app.js`, `css/app.css`, `manifest.webmanifest`, `sw.js`): home con i preferiti
+  (oggi o primo giorno utile), scelta per fascia → età (solo nidi) → dieta, vista settimanale con frecce.
+  Il service worker tiene in cache l'interfaccia e le ultime risposte dell'API: si apre anche offline.
+- **Prove:** `php tests/run.php` (SQLite in memoria, nessuna rete; feed di esempio in `tests/fixtures/`).
 - **Nessun dato personale** raccolto nella prima versione.
 
 ## Grafica
@@ -60,17 +69,28 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
 - Colori per fascia (dal banner): nidi rosso, infanzia verde, primaria giallo, secondaria acqua.
 - Logo «BuonApp» con le lettere che cadono nella padella → icona della PWA.
 - Slogan: «Che si mangia oggi a scuola?».
-- Da migliorare: font leggibile per i testi (il font del logo solo per il titolo), contrasti
-  (es. giallo su verde) per l'accessibilità.
+- Nella PWA: testo scuro su fondo chiaro, il colore della fascia solo come bordo (contrasto sufficiente);
+  font di sistema per i testi; strisce del banner come fascia sotto la testata.
+- Da fare: un logotipo in SVG al posto del testo «buonApp», schermata di avvio per iPhone.
 
 ## Domande aperte
 
 - [ ] Dopo il 2 novembre il Comune riusa gli stessi calendari o ne crea di nuovi? (ricontrollare)
 - [ ] Il server Tophost riesce a scaricare i feed da `calendar.google.com`?
-- [ ] Cosa mostrare quando un menu non è ancora pubblicato (oggi: dal 17/10 al 1/11)?
+- [x] Cosa mostrare quando un menu non è ancora pubblicato → messaggio «Il Comune non ha ancora pubblicato…»
+  e, se c'è, la prima data disponibile.
+- [ ] Importatore: cron su Tophost o azione programmata di GitHub?
+- [ ] «Messaggio alle famiglie»: notifica quotidiana nell'app o annuncio di lancio?
 - [ ] Mostrare anche i PDF del Comune (tabelle dietetiche, grammature)?
 - [ ] Notifiche («domani si mangia…») nella prima versione o dopo?
 - [ ] Dominio e cartella su Tophost.
+
+## Passi successivi
+
+1. Creare il database su Tophost ed eseguire `migrations/001_schema.sql`.
+2. Copiare `src/config.example.php` in `src/config.php` sul server.
+3. Workflow di deploy (`.github/workflows/deploy.yml` con `lftp`, come Reserve).
+4. Programmare l'importatore e ricontrollare i calendari dopo il 2 novembre.
 
 ## Problemi incontrati
 

@@ -1,0 +1,16 @@
+{
+  "name": "buonApp – Che si mangia oggi a scuola?",
+  "short_name": "buonApp",
+  "description": "Il menu del giorno delle scuole di Torino, dal nido alle medie.",
+  "lang": "it",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fffaf0",
+  "theme_color": "#fcbb21",
+  "icons": [
+    { "src": "img/icona-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "img/icona-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "img/icona-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

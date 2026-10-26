@@ -4,3 +4,4 @@ src/config.php
 *.sql
 !migrations/*.sql
 *.sqlite
+!tests/schema_sqlite.sql

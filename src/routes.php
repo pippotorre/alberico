@@ -11,4 +11,12 @@ return [
         $_GET['a'] ?? null,
         ConfigLoader::fuso()
     )],
+    ['POST', '#^/importa$#', function () {
+        set_time_limit(300);
+        return Api::importa(
+            $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? null,
+            ConfigLoader::get()['token_importazione'] ?? null,
+            fn() => (new Importer(ConfigLoader::pdo(), null, ConfigLoader::fuso()))->importaTutti()
+        );
+    }],
 ];

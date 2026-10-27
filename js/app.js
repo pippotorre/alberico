@@ -82,10 +82,19 @@
   function listaPiatti(piatti) {
     return '<ul class="piatti">' + piatti.map((p) => '<li>' + esc(p) + '</li>').join('') + '</ul>';
   }
-  function messaggioVuoto(prossimo) {
-    let t = 'Il Comune non ha ancora pubblicato il menu per questi giorni.';
-    if (prossimo) t += ' Il prossimo menu disponibile è di ' + esc(fmtGiorno.format(daIso(prossimo))) + '.';
-    return '<p class="vuoto">' + t + '</p>';
+  // Testi rivolti alle famiglie quando il menu non c'è: tono formale, con il rimando alla fonte ufficiale.
+  function linkUfficiale(m) {
+    return '<a href="' + esc(m.dieta.calendario) + '" target="_blank" rel="noopener">Vai al calendario ufficiale</a>';
+  }
+  function messaggioVuoto(m, prossimo) {
+    let t = 'Il menu per questi giorni non è ancora stato pubblicato dalla Città di Torino. ' +
+      'Sarà disponibile in questa pagina non appena verrà reso noto.';
+    if (prossimo) t += ' Il primo menu già pubblicato è quello di ' + esc(fmtGiorno.format(daIso(prossimo))) + '.';
+    return '<div class="vuoto"><p>' + t + '</p><p>' + linkUfficiale(m) + '</p></div>';
+  }
+  function messaggioErrore(m) {
+    return '<div class="vuoto"><p>Non è stato possibile caricare il menu. Si prega di verificare la connessione e di riprovare.</p>' +
+      '<p>' + linkUfficiale(m) + '</p></div>';
   }
 
   // --- Viste ---
@@ -110,10 +119,10 @@
           const g = r.giorni[0];
           const corpo = g
             ? '<h3' + (g.data === iso(oggi) ? ' class="oggi"' : '') + '>' + esc(nomeGiorno(g.data)) + '</h3>' + listaPiatti(g.piatti)
-            : messaggioVuoto(r.prossimo);
+            : messaggioVuoto(m, r.prossimo);
           return scheda(m, corpo, id);
         } catch (e) {
-          return scheda(m, '<p class="vuoto">Non riesco a caricare il menu. Controlla la connessione e riprova.</p>', id);
+          return scheda(m, messaggioErrore(m), id);
         }
       }));
       html += '<h1>I tuoi menu</h1>' + schede.join('');
@@ -164,11 +173,12 @@
       const r = await api('/menu/' + id + '/giorni?da=' + iso(inizio) + '&a=' + iso(fine));
       corpo = r.giorni.length
         ? r.giorni.map((g) => '<section class="scheda c-' + esc(m.fascia.colore) + '"><h3' +
-            (g.data === iso(new Date()) ? ' class="oggi"' : '') + '>' + esc(nomeGiorno(g.data)) + '</h3>' + listaPiatti(g.piatti) + '</section>').join('')
-        : messaggioVuoto(r.prossimo);
+            (g.data === iso(new Date()) ? ' class="oggi"' : '') + '>' + esc(nomeGiorno(g.data)) + '</h3>' + listaPiatti(g.piatti) + '</section>').join('') +
+          '<p class="fonte">Fonte: Città di Torino, ristorazione scolastica. ' + linkUfficiale(m) + '</p>'
+        : messaggioVuoto(m, r.prossimo);
       aggiornato(r.menu.aggiornato);
     } catch (e) {
-      corpo = '<p class="vuoto">Non riesco a caricare il menu. Controlla la connessione e riprova.</p>';
+      corpo = messaggioErrore(m);
     }
     const preferito = preferiti.includes(id);
     mostra('<a class="indietro" href="#/fascia/' + esc(m.fascia.id) + '">Indietro</a>' +

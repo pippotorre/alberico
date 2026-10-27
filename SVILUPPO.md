@@ -21,6 +21,8 @@ scuola secondaria di primo grado, per tutti i menu disponibili. L'utente può sa
 | 26/10/2026 | Un «menu» è la coppia **fascia scolastica + dieta** (es. «Primaria – ordinario»). |
 | 26/10/2026 | Preferiti (massimo 2) salvati solo sul dispositivo: niente account, nessun dato personale. |
 | 26/10/2026 | L'elenco dei calendari sta in un solo file (`src/Calendari.php`); l'importatore riallinea il database da lì. |
+| 27/10/2026 | Messaggio alle famiglie quando il menu non è pubblicato: tono formale, senza emoticon, con il link «Vai al calendario ufficiale» (pagina Google Calendar del Comune per quel menu). |
+| 27/10/2026 | Importazione giornaliera con GitHub Actions che chiama il sito (`POST /api/v1/importa` con token); il sito scarica i calendari nel suo MySQL. |
 | 26/10/2026 | Un feed vuoto o non scaricabile non cancella i giorni già salvati; l'errore resta in `menu.ultimo_errore`. |
 
 ## Fonte dei dati
@@ -46,7 +48,9 @@ sono già online, i calendari non ancora.
 
 ## Architettura
 
-- **Importatore** (`php bin/importa.php`, una volta al giorno; cron su Tophost o GitHub Actions da decidere): legge il feed iCal pubblico di ogni
+- **Importatore**: `.github/workflows/importa.yml` ogni giorno feriale alle 5:15 (ora solare) chiama
+  `POST /api/v1/importa` con `Authorization: Bearer <IMPORT_TOKEN>`; si può lanciare a mano da Actions → *Run workflow*.
+  In alternativa `php bin/importa.php` da riga di comando. Legge il feed iCal pubblico di ogni
   calendario (`https://calendar.google.com/calendar/ical/<ID>%40group.calendar.google.com/public/basic.ics`)
   e aggiorna MySQL. Se il Comune corregge un piatto, l'app si aggiorna da sola.
 - **Dati** (`migrations/001_schema.sql`): `fasce`, `diete`, `menu` (fascia + dieta + ID calendario),
@@ -79,8 +83,9 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
 - [ ] Il server Tophost riesce a scaricare i feed da `calendar.google.com`?
 - [x] Cosa mostrare quando un menu non è ancora pubblicato → messaggio «Il Comune non ha ancora pubblicato…»
   e, se c'è, la prima data disponibile.
-- [ ] Importatore: cron su Tophost o azione programmata di GitHub?
-- [ ] «Messaggio alle famiglie»: notifica quotidiana nell'app o annuncio di lancio?
+- [x] Importatore → GitHub Actions che chiama il sito.
+- [x] «Messaggio alle famiglie» → testo formale nella PWA quando il menu manca, con link al calendario ufficiale.
+- [ ] Il server Tophost raggiunge `calendar.google.com`? (si vede alla prima esecuzione del workflow)
 - [ ] Mostrare anche i PDF del Comune (tabelle dietetiche, grammature)?
 - [ ] Notifiche («domani si mangia…») nella prima versione o dopo?
 - [ ] Dominio e cartella su Tophost.
@@ -90,7 +95,8 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
 1. Creare il database su Tophost ed eseguire `migrations/001_schema.sql`.
 2. Copiare `src/config.example.php` in `src/config.php` sul server.
 3. Workflow di deploy (`.github/workflows/deploy.yml` con `lftp`, come Reserve).
-4. Programmare l'importatore e ricontrollare i calendari dopo il 2 novembre.
+4. Impostare su GitHub il secret `IMPORT_TOKEN` e la variabile `SITE_URL`, e mettere lo stesso token in `src/config.php`.
+5. Ricontrollare i calendari dopo il 2 novembre.
 
 ## Problemi incontrati
 

@@ -20,6 +20,8 @@ Le decisioni e il diario del progetto sono in [SVILUPPO.md](SVILUPPO.md).
 
 1. Eseguire `migrations/001_schema.sql` in phpMyAdmin.
 2. Copiare `src/config.example.php` in `src/config.php` e inserire i dati del database.
-3. Lanciare `php bin/importa.php` e programmarlo una volta al giorno.
+3. Generare un token (`php -r 'echo bin2hex(random_bytes(32));'`) e metterlo in `src/config.php`
+   (`token_importazione`) e su GitHub come secret `IMPORT_TOKEN`; aggiungere la variabile `SITE_URL`.
+4. Lanciare a mano il workflow *Importa i menu* (Actions → Run workflow); poi gira da solo ogni mattina.
 
 `src/config.php` non va mai nel repository.

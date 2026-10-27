@@ -1,0 +1,35 @@
+# Ogni mattina chiede al sito di scaricare i menu dai calendari del Comune.
+# Impostazioni (Settings → Secrets and variables → Actions):
+#   IMPORT_TOKEN  (secret)   lo stesso valore di 'token_importazione' in src/config.php sul server
+#   SITE_URL      (variable) indirizzo del sito, es. https://www.esempio.it/buonapp
+name: Importa i menu
+
+on:
+  schedule:
+    - cron: "15 4 * * 1-5"   # dal lunedì al venerdì, 5:15 ora solare italiana (6:15 legale)
+  workflow_dispatch:
+
+jobs:
+  importa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Avvia l'importazione sul sito
+        env:
+          IMPORT_TOKEN: ${{ secrets.IMPORT_TOKEN }}
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          if [ -z "$IMPORT_TOKEN" ] || [ -z "$SITE_URL" ]; then
+            echo "::error::Mancano il secret IMPORT_TOKEN o la variabile SITE_URL"
+            exit 1
+          fi
+          codice=$(curl -sS -o risposta.json -w '%{http_code}' --max-time 300 \
+            -X POST -H "Authorization: Bearer $IMPORT_TOKEN" "${SITE_URL%/}/api/v1/importa")
+          cat risposta.json; echo
+          if [ "$codice" != "200" ]; then
+            echo "::error::Importazione fallita (HTTP $codice)"
+            exit 1
+          fi
+          if grep -q '"errori":\[{' risposta.json; then
+            echo "::warning::Alcuni calendari non sono stati importati: vedere la risposta sopra"
+          fi

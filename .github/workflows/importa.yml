@@ -1,7 +1,7 @@
 # Ogni mattina chiede al sito di scaricare i menu dai calendari del Comune.
 # Impostazioni (Settings → Secrets and variables → Actions):
 #   IMPORT_TOKEN  (secret)   lo stesso valore di 'token_importazione' in src/config.php sul server
-#   SITE_URL      (variable) indirizzo del sito, es. https://www.esempio.it/buonapp
+#   SITE_URL      (variable) indirizzo del sito, https://www.entratadisicurezza.com/buonapp
 name: Importa i menu
 
 on:

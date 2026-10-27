@@ -1,9 +1,10 @@
 // Service worker di buonApp: l'app si apre anche senza rete e mostra l'ultimo menu visto.
 // Cambiare VERSIONE a ogni rilascio che modifica i file dell'interfaccia.
-const VERSIONE = 'buonapp-v2';
+const VERSIONE = 'buonapp-v3';
 const GUSCIO = [
   './',
   'index.html',
+  'privacy.html',
   'css/app.css',
   'js/app.js',
   'manifest.webmanifest',

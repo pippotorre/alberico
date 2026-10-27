@@ -166,6 +166,9 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--arancio); outli
 .vuoto a, .fonte a { color: var(--testo); font-weight: 600; }
 .fonte { color: var(--testo-tenue); font-size: .9rem; }
 
+.testo h2 { margin-top: 28px; }
+.testo p { margin: 0 0 12px; }
+
 .caricamento { color: var(--testo-tenue); }
 
 .piede {

@@ -8,11 +8,12 @@
   * { box-sizing: border-box; }
   html, body { margin:0; }
   body { width:560px; height:794px; font-family: Inter, sans-serif; color: var(--testo); background: var(--carta); overflow:hidden; position:relative; }
-  .testata { background: var(--giallo); padding: 34px 28px 0; height: 300px; position: relative; overflow:hidden; }
-  .testata h1 { margin:0; font: 400 50px/1 'Black Ops One', sans-serif; color: var(--rosso); }
-  .testata p { margin:14px 0 0; font: 400 27px/1.25 'Emilys Candy', sans-serif; max-width: 240px; }
-  .testata img { position:absolute; right: 0; bottom: 0; width: 300px; height: 300px; }
-  .strisce { height: 14px; background: linear-gradient(90deg, var(--verde) 0 25%, var(--rosso) 25% 50%, var(--arancio) 50% 75%, var(--acqua) 75% 100%); }
+  .testata { background: var(--giallo); height: 300px; position: relative; overflow:hidden; }
+  .testata p { position:absolute; left:28px; top:40px; margin:0; font: 400 34px/1.2 'Emilys Candy', sans-serif; max-width: 210px; }
+  .colonne { position:absolute; right:0; top:20px; bottom:0; width: 290px;
+    background: linear-gradient(90deg, var(--verde) 0 27%, var(--rosso) 27% 61%, var(--verde) 61% 70%, var(--acqua) 70% 100%); }
+  .testata img { position:absolute; right: 6px; bottom: 16px; width: 352px; }
+  .strisce { height: 20px; background: linear-gradient(90deg, var(--verde) 0 25%, var(--rosso) 25% 50%, var(--arancio) 50% 75%, var(--acqua) 75% 100%); }
   .corpo { padding: 18px 28px 0; }
   .intro { font-size: 15.5px; line-height: 1.4; margin: 0 0 6px; }
   .fasce { display:flex; gap:6px; margin: 10px 0 14px; flex-wrap: wrap; }
@@ -32,9 +33,9 @@
 </style></head>
 <body>
   <div class="testata">
-    <h1>buonApp</h1>
-    <p>Che si mangia<br>oggi a scuola?</p>
-    <img src="../../img/icona-512.png" alt="">
+    <p>Che si mangia oggi a scuola?</p>
+    <div class="colonne"></div>
+    <img src="../../img/padella.png" alt="buonApp">
   </div>
   <div class="strisce"></div>
   <div class="corpo">

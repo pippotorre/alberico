@@ -161,6 +161,11 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--arancio); outli
   margin: 0 0 16px;
 }
 
+.vuoto p { margin: 0; }
+.vuoto p + p { margin-top: 8px; }
+.vuoto a, .fonte a { color: var(--testo); font-weight: 600; }
+.fonte { color: var(--testo-tenue); font-size: .9rem; }
+
 .caricamento { color: var(--testo-tenue); }
 
 .piede {

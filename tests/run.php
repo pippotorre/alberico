@@ -101,5 +101,28 @@ verifica('api: menu inesistente → 404', $codice === 404);
 [$codice, $r] = Api::giorni($pdo, (int) $primaria, '2026-02-30', null, 'Europe/Rome');
 verifica('api: data non valida → si usa oggi', $codice === 200 && $r['da'] === (new DateTime('today', new DateTimeZone('Europe/Rome')))->format('Y-m-d'), $r['da']);
 
+// --- Importazione via API ---
+$token = str_repeat('a1', 20);
+$chiamate = 0;
+$finto = function () use (&$chiamate) {
+    $chiamate++;
+    return [['menu' => 'a', 'giorni' => 10, 'errore' => null], ['menu' => 'b', 'giorni' => 0, 'errore' => 'download fallito']];
+};
+[$codice] = Api::importa('Bearer ' . $token, null, $finto);
+verifica('importa: senza token configurato → 503', $codice === 503 && $chiamate === 0);
+[$codice] = Api::importa('Bearer corto', 'corto', $finto);
+verifica('importa: token configurato troppo corto → 503', $codice === 503 && $chiamate === 0);
+[$codice] = Api::importa(null, $token, $finto);
+verifica('importa: senza intestazione → 401', $codice === 401 && $chiamate === 0);
+[$codice] = Api::importa('Bearer sbagliato', $token, $finto);
+verifica('importa: token sbagliato → 401', $codice === 401 && $chiamate === 0);
+[$codice, $r] = Api::importa('Bearer ' . $token, $token, $finto);
+verifica('importa: token giusto → 200 con riepilogo', $codice === 200 && $chiamate === 1 && $r['importati'] === 1 && count($r['errori']) === 1, $r);
+[$codice] = Api::importa('Bearer ' . $token, $token, fn() => [['menu' => 'a', 'giorni' => 0, 'errore' => 'x']]);
+verifica('importa: tutti i calendari falliti → 502', $codice === 502);
+
+// --- Link al calendario ufficiale ---
+verifica('api: link al calendario ufficiale', $elenco[4]['diete'][0]['calendario'] === 'https://calendar.google.com/calendar/embed?src=hqmct17n9uhpn10l9k9hoc08lo%40group.calendar.google.com&ctz=Europe%2FRome', $elenco[4]['diete'][0]['calendario']);
+
 echo $falliti === 0 ? "\nTutte le prove sono passate.\n" : "\n$falliti prove fallite.\n";
 exit($falliti === 0 ? 0 : 1);

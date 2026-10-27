@@ -83,6 +83,13 @@ final class Calendari
         ],
     ];
 
+    /** Pagina pubblica del calendario, quella linkata dal sito del Comune. */
+    public static function urlUfficiale(string $calendarId): string
+    {
+        return 'https://calendar.google.com/calendar/embed?src='
+            . rawurlencode($calendarId . self::SUFFISSO) . '&ctz=Europe%2FRome';
+    }
+
     public static function urlFeed(string $calendarId): string
     {
         return 'https://calendar.google.com/calendar/ical/'

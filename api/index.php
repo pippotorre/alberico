@@ -27,7 +27,7 @@ try {
     [$codice, $dati] = [500, ['errore' => 'Errore interno']];
 }
 
-if ($codice === 200 && $metodo === 'GET') {
+if ($codice === 200 && $metodo === 'GET' && $percorso !== '/importa') {
     // I menu cambiano al massimo una volta al giorno.
     header('Cache-Control: public, max-age=900');
 }

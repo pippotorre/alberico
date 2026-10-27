@@ -240,6 +240,10 @@
   window.addEventListener('hashchange', vai);
   vai();
 
+  // Chiede al sito di aggiornare i menu, se è passato abbastanza tempo dall'ultima volta.
+  // La risposta non serve: il sito decide da solo se scaricare i calendari.
+  fetch(API + '/aggiorna', { method: 'POST' }).catch(() => {});
+
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
   }

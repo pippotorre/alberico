@@ -11,7 +11,7 @@ return [
         'password' => 'PASSWORD',
     ],
     'fuso' => 'Europe/Rome',
-    // Stesso valore del secret IMPORT_TOKEN su GitHub (almeno 32 caratteri casuali,
-    // es. generato con: php -r 'echo bin2hex(random_bytes(32));').
+    // Facoltativo: serve solo per forzare l'importazione con POST /api/v1/importa
+    // (almeno 32 caratteri casuali, es. generato con: php -r 'echo bin2hex(random_bytes(32));').
     'token_importazione' => '',
 ];

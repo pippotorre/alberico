@@ -110,6 +110,46 @@ final class Api
         ]];
     }
 
+    /**
+     * Chiamata dall'app a ogni apertura. Se è il momento, scarica i calendari (la richiesta dura
+     * finché finisce, ma l'app non la aspetta); altrimenti risponde subito 204.
+     */
+    public static function aggiorna(PDO $pdo, DateTimeImmutable $ora, callable $importaTutti): array
+    {
+        if (!Aggiornamento::prenota($pdo, $ora)) {
+            return [204, null];
+        }
+        $esiti = $importaTutti();
+        $errori = array_filter($esiti, fn($e) => $e['errore'] !== null);
+        return [200, ['menu' => count($esiti), 'importati' => count($esiti) - count($errori)]];
+    }
+
+    /** Situazione dell'aggiornamento, per controllare che l'importazione funzioni. */
+    public static function stato(PDO $pdo): array
+    {
+        $menu = $pdo->query(
+            'SELECT m.fascia_id, m.dieta_id, m.ultimo_import, m.ultimo_errore,
+                    (SELECT COUNT(*) FROM buonapp_giorni g WHERE g.menu_id = m.id) AS giorni,
+                    (SELECT MAX(data) FROM buonapp_giorni g WHERE g.menu_id = m.id) AS ultimo_giorno
+               FROM buonapp_menu m WHERE m.attivo = 1 ORDER BY m.id'
+        )->fetchAll();
+        $errori = [];
+        foreach ($menu as $m) {
+            if ($m['ultimo_errore'] !== null) {
+                $errori[] = ['menu' => "$m[fascia_id]/$m[dieta_id]", 'errore' => $m['ultimo_errore']];
+            }
+        }
+        return [
+            'ultimo_tentativo' => Aggiornamento::ultimoTentativo($pdo),
+            'prossimo_tentativo_dopo_ore' => Aggiornamento::ORE,
+            'menu' => count($menu),
+            'menu_con_giorni' => count(array_filter($menu, fn($m) => (int) $m['giorni'] > 0)),
+            'ultimo_import' => max(array_column($menu, 'ultimo_import') ?: [null]),
+            'ultimo_giorno_pubblicato' => max(array_column($menu, 'ultimo_giorno') ?: [null]),
+            'errori' => $errori,
+        ];
+    }
+
     private static function data(?string $s): ?DateTimeImmutable
     {
         if ($s === null || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $s)) {

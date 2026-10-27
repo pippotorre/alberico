@@ -263,6 +263,8 @@
 
   // Installazione (Android e Chrome): il pulsante in fondo alla pagina compare solo se il browser
   // permette di installare l'app e se non è già installata.
+  // Statistiche (GoatCounter): eventi anonimi sull'installazione. Se lo script non è caricato (offline, blocco pubblicità) non fa nulla.
+  const conta = (nome) => { try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: 'buonapp-' + nome, title: 'buonapp: ' + nome, event: true }); } catch (e) {} };
   let richiestaInstallazione = null;
   const installa = document.getElementById('installa');
   window.addEventListener('beforeinstallprompt', (ev) => {
@@ -272,12 +274,14 @@
   });
   installa.addEventListener('click', async () => {
     if (!richiestaInstallazione) return;
+    conta('installa-clic');
     richiestaInstallazione.prompt();
-    await richiestaInstallazione.userChoice.catch(() => null);
+    const scelta = await richiestaInstallazione.userChoice.catch(() => null);
+    if (scelta && scelta.outcome === 'dismissed') conta('installa-rifiutata');
     richiestaInstallazione = null;
     installa.hidden = true;
   });
-  window.addEventListener('appinstalled', () => { installa.hidden = true; });
+  window.addEventListener('appinstalled', () => { installa.hidden = true; conta('installata'); });
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));

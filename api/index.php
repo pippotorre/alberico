@@ -27,13 +27,9 @@ try {
     [$codice, $dati] = [500, ['errore' => 'Errore interno']];
 }
 
-if ($codice === 200 && $metodo === 'GET' && str_starts_with($percorso, '/menu')) {
-    // I menu cambiano di rado; 5 minuti bastano a non ripetere le stesse richieste.
-    header('Cache-Control: public, max-age=300');
-}
-if ($codice !== 200 || $metodo !== 'GET' || !str_starts_with($percorso, '/menu')) {
-    header('Cache-Control: no-store');
-}
+// Nessuna cache nel browser: dopo un'importazione i menu nuovi devono vedersi subito
+// (una risposta vuota tenuta in cache nascondeva tutti i menu). L'app offline usa il service worker.
+header('Cache-Control: no-store');
 http_response_code($codice);
 if ($dati !== null) {
     echo json_encode($dati, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);

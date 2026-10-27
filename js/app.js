@@ -57,13 +57,19 @@
     return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
   async function api(percorso) {
-    const r = await fetch(API + percorso, { headers: { Accept: 'application/json' } });
+    // no-cache: il browser ricontrolla sempre con il sito, così un menu appena importato si vede subito.
+    const r = await fetch(API + percorso, { cache: 'no-cache', headers: { Accept: 'application/json' } });
     const dati = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(dati.errore || 'Errore ' + r.status);
     return dati;
   }
   async function caricaElenco() {
-    if (!elenco) elenco = await api('/menu');
+    if (!elenco) {
+      const r = await api('/menu');
+      // Un elenco vuoto non si tiene in memoria: alla prossima vista si richiede.
+      if (!r.fasce || !r.fasce.length) throw new Error('elenco vuoto');
+      elenco = r;
+    }
     return elenco;
   }
   function trovaMenu(id) {
@@ -194,7 +200,8 @@
   }
 
   function nonTrovato() {
-    mostra('<a class="indietro" href="#/">Home</a><p class="vuoto">Questo menu non esiste più. Torna alla home e scegline un altro.</p>');
+    mostra('<a class="indietro" href="#/">Home</a><p class="vuoto">Il menu richiesto non è disponibile. ' +
+      'Si prega di tornare alla pagina iniziale e di sceglierne un altro.</p>');
   }
 
   function aggiornato(quando) {
@@ -234,7 +241,7 @@
         await settimana(Number(parti[1]), /^\d{4}-\d{2}-\d{2}$/.test(parti[2] || '') ? parti[2] : null);
       } else await home();
     } catch (e) {
-      mostra('<p class="vuoto">Non riesco a caricare buonApp. Controlla la connessione e riprova.</p>');
+      mostra('<p class="vuoto">Non è stato possibile caricare i menu. Si prega di verificare la connessione e di riprovare tra qualche minuto.</p>');
     }
   }
   window.addEventListener('hashchange', vai);

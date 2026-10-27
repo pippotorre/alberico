@@ -70,6 +70,7 @@ sono già online, i calendari non ancora.
 - **PWA** (`index.html`, `js/app.js`, `css/app.css`, `manifest.webmanifest`, `sw.js`): home con i preferiti
   (oggi o primo giorno utile), scelta per fascia → età (solo nidi) → dieta, vista settimanale con frecce.
   Il service worker tiene in cache l'interfaccia e le ultime risposte dell'API: si apre anche offline.
+- **Diagramma di sequenza** delle interazioni tra i componenti: `docs/architettura-sequenza.mmd` (da incollare in Mermaid).
 - **Prove:** `php tests/run.php` (SQLite in memoria, nessuna rete; feed di esempio in `tests/fixtures/`).
 - **Nessun dato personale** raccolto nella prima versione.
 
@@ -79,7 +80,8 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
 
 - Palette: giallo, verde oliva, rosso, verde acqua + arancio della padella.
 - Colori per fascia (dal banner): nidi rosso, infanzia verde, primaria giallo, secondaria acqua.
-- Logo «BuonApp» con le lettere che cadono nella padella → icona della PWA.
+- Logo «BuonApp» con le lettere che cadono nella padella. Icona della PWA (dal 27/10/2026): padella su piatto chiaro e fondo giallo,
+  come la schermata di avvio, così su Android la schermata di sistema e quella dell'app coincidono.
 - Slogan: «Che si mangia oggi a scuola?».
 - Nella PWA: testo scuro su fondo chiaro, il colore della fascia solo come bordo (contrasto sufficiente);
   font di sistema per i testi; strisce del banner come fascia sotto la testata.
@@ -87,7 +89,9 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
   **Emilys Candy** (simile ai riccioli del vecchio volantino). Google Fonts OFL, file in `font/`, solo caratteri latini.
 - Schermata di avvio (27/10/2026): padella con le lettere (`img/padella.png`, immagine fornita dall'utente) su fondo giallo,
   con un piatto chiaro dietro perché le lettere gialle si vedano. iPhone e iPad: `img/avvio/` e tag in `index.html`,
-  rigenerabili con `python3 docs/avvio/genera.py`; Android: colore di fondo giallo nel manifest.
+  rigenerabili con `python3 docs/avvio/genera.py`; Android: Chrome compone da solo la schermata di sistema (icona + colore), quindi l'app installata
+  mostra subito dopo una schermata di avvio in HTML (`#avvio`, `img/padella-piatto.png`) identica a quella di iPhone e iPad,
+  per almeno 2,5 secondi. Con l'app del Play Store (TWA) si potrà usare la padella anche nella schermata di sistema.
 - Volantino A5 verticale per WhatsApp (27/10/2026): sorgente in `docs/volantino/` (padella su strisce colorate, solo lo slogan, HTML + QR verso
   https://www.entratadisicurezza.com/buonapp/), PNG e PDF con `node docs/volantino/rendi.js docs/volantino`.
 - Da fare: un logotipo in SVG al posto del testo «buonApp», schermata di avvio per iPhone.

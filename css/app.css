@@ -183,3 +183,21 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--arancio); outli
   color: var(--testo-tenue);
   font-size: .85rem;
 }
+
+/* Schermata di avvio: solo nell'app installata, uguale alle immagini di avvio di iPhone e iPad. */
+#avvio { display: none; }
+@media (display-mode: standalone) {
+  #avvio {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    align-items: center;
+    justify-content: center;
+    background: var(--giallo);
+    transition: opacity .35s ease;
+  }
+  #avvio img { width: 74.4vmin; height: 74.4vmin; }
+}
+#avvio.chiuso { opacity: 0; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { #avvio { transition: none; } }

@@ -10,9 +10,9 @@ final class Api
     {
         $righe = $pdo->query(
             'SELECT m.id, m.fascia_id, f.nome AS fascia, f.gruppo, f.colore, m.dieta_id, d.nome AS dieta, m.calendar_id, m.ultimo_import
-               FROM menu m
-               JOIN fasce f ON f.id = m.fascia_id
-               JOIN diete d ON d.id = m.dieta_id
+               FROM buonapp_menu m
+               JOIN buonapp_fasce f ON f.id = m.fascia_id
+               JOIN buonapp_diete d ON d.id = m.dieta_id
               WHERE m.attivo = 1
               ORDER BY f.ordine, d.ordine'
         )->fetchAll();
@@ -51,7 +51,7 @@ final class Api
 
         $m = $pdo->prepare(
             'SELECT m.id, f.nome AS fascia, f.colore, d.nome AS dieta, m.calendar_id, m.ultimo_import
-               FROM menu m JOIN fasce f ON f.id = m.fascia_id JOIN diete d ON d.id = m.dieta_id
+               FROM buonapp_menu m JOIN buonapp_fasce f ON f.id = m.fascia_id JOIN buonapp_diete d ON d.id = m.dieta_id
               WHERE m.id = ? AND m.attivo = 1'
         );
         $m->execute([$menuId]);
@@ -60,7 +60,7 @@ final class Api
             return [404, ['errore' => 'Menu non trovato']];
         }
 
-        $g = $pdo->prepare('SELECT data, piatti FROM giorni WHERE menu_id = ? AND data BETWEEN ? AND ? ORDER BY data');
+        $g = $pdo->prepare('SELECT data, piatti FROM buonapp_giorni WHERE menu_id = ? AND data BETWEEN ? AND ? ORDER BY data');
         $g->execute([$menuId, $inizio->format('Y-m-d'), $fine->format('Y-m-d')]);
         $giorni = array_map(fn($r) => [
             'data' => $r['data'],
@@ -68,7 +68,7 @@ final class Api
         ], $g->fetchAll());
 
         // Prima data pubblicata dopo l'intervallo: serve a dire "il menu riprende il…".
-        $p = $pdo->prepare('SELECT MIN(data) FROM giorni WHERE menu_id = ? AND data > ?');
+        $p = $pdo->prepare('SELECT MIN(data) FROM buonapp_giorni WHERE menu_id = ? AND data > ?');
         $p->execute([$menuId, $fine->format('Y-m-d')]);
 
         return [200, [

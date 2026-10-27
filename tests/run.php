@@ -60,25 +60,28 @@ $esiti = $importer->importaTutti();
 $numMenu = array_sum(array_map('count', Calendari::CALENDARI));
 verifica('importer: un download per ogni menu', count($scaricati) === $numMenu && $numMenu === 40, count($scaricati));
 verifica('importer: URL del feed pubblico', in_array('https://calendar.google.com/calendar/ical/hqmct17n9uhpn10l9k9hoc08lo%40group.calendar.google.com/public/basic.ics', $scaricati, true));
-$primaria = $pdo->query("SELECT id FROM menu WHERE fascia_id = 'primaria' AND dieta_id = 'ordinario'")->fetchColumn();
-verifica('importer: 4 giorni salvati per la primaria', (int) $pdo->query("SELECT COUNT(*) FROM giorni WHERE menu_id = $primaria")->fetchColumn() === 4);
-$err = $pdo->query("SELECT ultimo_errore FROM menu WHERE calendar_id = 'alhf1h0c8rtq7oeq0bq6i9jff8'")->fetchColumn();
+$primaria = $pdo->query("SELECT id FROM buonapp_menu WHERE fascia_id = 'primaria' AND dieta_id = 'ordinario'")->fetchColumn();
+verifica('importer: 4 giorni salvati per la primaria', (int) $pdo->query("SELECT COUNT(*) FROM buonapp_giorni WHERE menu_id = $primaria")->fetchColumn() === 4);
+$err = $pdo->query("SELECT ultimo_errore FROM buonapp_menu WHERE calendar_id = 'alhf1h0c8rtq7oeq0bq6i9jff8'")->fetchColumn();
 verifica('importer: errore di download registrato', str_contains((string) $err, '404'), $err);
 
 // Un secondo giro con il feed vuoto non deve cancellare i giorni già salvati.
 $vuoto = new Importer($pdo, fn() => "BEGIN:VCALENDAR\r\nEND:VCALENDAR\r\n");
 $vuoto->importa((int) $primaria, 'hqmct17n9uhpn10l9k9hoc08lo');
-verifica('importer: feed vuoto non cancella nulla', (int) $pdo->query("SELECT COUNT(*) FROM giorni WHERE menu_id = $primaria")->fetchColumn() === 4);
+verifica('importer: feed vuoto non cancella nulla', (int) $pdo->query("SELECT COUNT(*) FROM buonapp_giorni WHERE menu_id = $primaria")->fetchColumn() === 4);
 
 // Una correzione del Comune sostituisce il giorno.
 $corretto = str_replace('PASTA ALLE ZUCCHINE', 'PASTA AL POMODORO', $ics);
 (new Importer($pdo, fn() => $corretto))->importa((int) $primaria, 'hqmct17n9uhpn10l9k9hoc08lo');
-$piatti = json_decode($pdo->query("SELECT piatti FROM giorni WHERE menu_id = $primaria AND data = '2026-09-01'")->fetchColumn(), true);
+$piatti = json_decode($pdo->query("SELECT piatti FROM buonapp_giorni WHERE menu_id = $primaria AND data = '2026-09-01'")->fetchColumn(), true);
 verifica('importer: la correzione sostituisce il piatto', $piatti[0] === 'Pasta al pomodoro', $piatti);
 
 // Reimportare l'elenco non duplica i menu.
 $importer->sincronizzaElenco();
-verifica('importer: elenco senza duplicati', (int) $pdo->query('SELECT COUNT(*) FROM menu')->fetchColumn() === 40);
+verifica('importer: elenco senza duplicati', (int) $pdo->query('SELECT COUNT(*) FROM buonapp_menu')->fetchColumn() === 40);
+
+$tabelle = $pdo->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name <> 'sqlite_sequence'")->fetchAll(PDO::FETCH_COLUMN);
+verifica('schema: tutte le tabelle hanno il prefisso buonapp_', $tabelle !== [] && array_filter($tabelle, fn($t) => !str_starts_with($t, 'buonapp_')) === [], $tabelle);
 
 // --- Api ---
 $elenco = Api::elencoMenu($pdo)['fasce'];

@@ -152,6 +152,7 @@ button, .bottone {
 }
 button:focus-visible, a:focus-visible { outline: 3px solid var(--arancio); outline-offset: 2px; }
 
+.installa { background: var(--giallo); border-color: var(--giallo); color: #1f1d1a; font-weight: 600; }
 .preferito[aria-pressed="true"] { background: var(--giallo); border-color: var(--giallo); color: #1f1d1a; }
 
 .avviso {

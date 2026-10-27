@@ -30,6 +30,7 @@ scuola secondaria di primo grado, per tutti i menu disponibili. L'utente può sa
 | 27/10/2026 | Tabelle con prefisso `buonapp_` (`buonapp_fasce`, `buonapp_diete`, `buonapp_menu`, `buonapp_giorni`): il database Tophost è condiviso con altre app. Vale anche per le nuove tabelle. |
 | 27/10/2026 | Titolare per l'informativa privacy: gestore di entratadisicurezza.com, info@entratadisicurezza.com. |
 | 27/10/2026 | GitHub Actions non raggiunge Tophost: niente workflow. I menu si aggiornano quando qualcuno apre l'app (`POST /api/v1/aggiorna`), al massimo ogni 6 ore; la prenotazione in `buonapp_stato` evita doppi aggiornamenti. `GET /api/v1/stato` mostra l'esito. |
+| 27/10/2026 | Pulsante «Installa l’app sul telefono» in fondo alla pagina: compare solo dove il browser lo consente (Android/Chrome) e se l'app non è già installata. |
 | 26/10/2026 | Un feed vuoto o non scaricabile non cancella i giorni già salvati; l'errore resta in `buonapp_menu.ultimo_errore`. |
 
 ## Fonte dei dati

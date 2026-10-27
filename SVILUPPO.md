@@ -32,6 +32,8 @@ scuola secondaria di primo grado, per tutti i menu disponibili. L'utente può sa
 | 27/10/2026 | GitHub Actions non raggiunge Tophost: niente workflow. I menu si aggiornano quando qualcuno apre l'app (`POST /api/v1/aggiorna`), al massimo ogni 6 ore; la prenotazione in `buonapp_stato` evita doppi aggiornamenti. `GET /api/v1/stato` mostra l'esito. |
 | 27/10/2026 | Pulsante «Installa l’app sul telefono» in fondo alla pagina: compare solo dove il browser lo consente (Android/Chrome) e se l'app non è già installata. |
 | 26/10/2026 | Un feed vuoto o non scaricabile non cancella i giorni già salvati; l'errore resta in `buonapp_menu.ultimo_errore`. |
+| 27/10/2026 | **Statistiche di visita con GoatCounter** (senza cookie, nessun dato personale), account unico del dominio https://entratadisicurezza.goatcounter.com. Script in `index.html`; percorso inviato senza `index.html` (`/buonapp/`). Eventi in `js/app.js` (funzione `conta`): `buonapp-installa-clic`, `buonapp-installa-rifiutata`, `buonapp-installata` (anche installando dal menu di Chrome). Se lo script è bloccato (blocco pubblicità, offline) l'app funziona uguale. |
+| 27/10/2026 | Informativa privacy aggiornata: tolto «non utilizza strumenti di statistica», aggiunta la sezione «Statistiche di visita». Service worker `buonapp-v13`. |
 
 ## Fonte dei dati
 
@@ -127,9 +129,15 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
    (alla radice del dominio, non in `/buonapp`), con l'impronta SHA-256 della chiave di firma di Google Play.
    Senza questo file l'app mostra la barra dell'indirizzo.
 4. Scheda del Play Store: descrizione, icona 512×512, grafica in evidenza 1024×500 (c'è già il banner originale),
-   schermate del telefono, link all'informativa privacy, sezione «Sicurezza dei dati»: nessun dato raccolto o condiviso.
+   schermate del telefono, link all'informativa privacy, sezione «Sicurezza dei dati»: dal 27/10/2026 dichiarare
+   «Attività nelle app → Interazioni con l'app», raccolta per **Analisi**, non condivisa (statistiche GoatCounter, aggregate e senza identificativi).
 5. Account personale nuovo: Google chiede un periodo di test chiuso con un gruppo di tester prima della
    produzione (verificare le regole in vigore al momento).
+
+## Verifiche fatte
+
+- 27/10/2026 – Statistiche: prova in Chromium simulando Android con lo script di GoatCounter vero. Una visita per `/buonapp/`
+  e i tre eventi di installazione inviati correttamente; nessun errore JavaScript.
 
 ## Problemi incontrati
 

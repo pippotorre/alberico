@@ -23,6 +23,10 @@ scuola secondaria di primo grado, per tutti i menu disponibili. L'utente può sa
 | 26/10/2026 | L'elenco dei calendari sta in un solo file (`src/Calendari.php`); l'importatore riallinea il database da lì. |
 | 27/10/2026 | Messaggio alle famiglie quando il menu non è pubblicato: tono formale, senza emoticon, con il link «Vai al calendario ufficiale» (pagina Google Calendar del Comune per quel menu). |
 | 27/10/2026 | Importazione giornaliera con GitHub Actions che chiama il sito (`POST /api/v1/importa` con token); il sito scarica i calendari nel suo MySQL. |
+| 27/10/2026 | Indirizzo del sito: **https://www.entratadisicurezza.com/buonapp** (Tophost). |
+| 27/10/2026 | App Android sul Play Store come **PWA impacchettata** (Trusted Web Activity): una sola base di codice. Nuovo account sviluppatore (il vecchio è stato disattivato), quindi nuova scheda e nuovo nome del pacchetto. iPhone resta sulla PWA. |
+| 27/10/2026 | Informativa privacy in `privacy.html`: nessun dato personale raccolto, preferiti solo sul dispositivo. |
+| 27/10/2026 | Tophost non permette il deploy automatico: si carica a mano lo ZIP creato da `bin/crea-zip.sh` (cartella `buonapp`). `config.php` si compila e si carica a parte, non è nello ZIP né nel repo. |
 | 26/10/2026 | Un feed vuoto o non scaricabile non cancella i giorni già salvati; l'errore resta in `menu.ultimo_errore`. |
 
 ## Fonte dei dati
@@ -88,18 +92,33 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
 - [ ] Il server Tophost raggiunge `calendar.google.com`? (si vede alla prima esecuzione del workflow)
 - [ ] Mostrare anche i PDF del Comune (tabelle dietetiche, grammature)?
 - [ ] Notifiche («domani si mangia…») nella prima versione o dopo?
-- [ ] Dominio e cartella su Tophost.
+- [x] Dominio e cartella su Tophost → www.entratadisicurezza.com/buonapp.
+- [ ] Titolare e email di contatto da inserire nell'informativa privacy.
 
 ## Passi successivi
 
-1. Creare il database su Tophost ed eseguire `migrations/001_schema.sql`.
+1. Creare il database su Tophost ed eseguire `migrations/001_schema.sql` in phpMyAdmin.
 2. Copiare `src/config.example.php` in `src/config.php` sul server.
-3. Workflow di deploy (`.github/workflows/deploy.yml` con `lftp`, come Reserve).
+3. Caricare la cartella `buonapp` dallo ZIP (`sh bin/crea-zip.sh`) e `src/config.php` compilato.
 4. Impostare su GitHub il secret `IMPORT_TOKEN` e la variabile `SITE_URL`, e mettere lo stesso token in `src/config.php`.
 5. Ricontrollare i calendari dopo il 2 novembre.
+
+## Play Store (piano)
+
+1. Sito online in HTTPS su https://www.entratadisicurezza.com/buonapp e importazione funzionante.
+2. Pacchetto Android con PWABuilder (https://www.pwabuilder.com) o Bubblewrap partendo dall'indirizzo del sito:
+   nome del pacchetto proposto `com.entratadisicurezza.buonapp`.
+3. Caricare il file `assetlinks.json` generato in **`https://www.entratadisicurezza.com/.well-known/assetlinks.json`**
+   (alla radice del dominio, non in `/buonapp`), con l'impronta SHA-256 della chiave di firma di Google Play.
+   Senza questo file l'app mostra la barra dell'indirizzo.
+4. Scheda del Play Store: descrizione, icona 512×512, grafica in evidenza 1024×500 (c'è già il banner originale),
+   schermate del telefono, link all'informativa privacy, sezione «Sicurezza dei dati»: nessun dato raccolto o condiviso.
+5. Account personale nuovo: Google chiede un periodo di test chiuso con un gruppo di tester prima della
+   produzione (verificare le regole in vigore al momento).
 
 ## Problemi incontrati
 
 | Data | Problema | Soluzione |
 |---|---|---|
 | 26/10/2026 | L'ambiente cloud non raggiungeva `www.comune.torino.it` e `calendar.google.com`. | Pagina letta dal browser dell'utente; calendario letto con il connettore Google Calendar. Il deploy e l'importatore girano fuori da qui. |
+| 27/10/2026 | Tophost non consente il deploy automatico via FTP da GitHub. | Pacchetto ZIP creato dal repo e caricato a mano; `config.php` separato. |

@@ -3,6 +3,7 @@
   "short_name": "buonApp",
   "description": "Il menu del giorno delle scuole di Torino, dal nido alle medie.",
   "lang": "it",
+  "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

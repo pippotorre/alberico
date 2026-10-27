@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8">
+<style>
+  @font-face { font-family: 'Black Ops One'; src: url(../../font/BlackOpsOne.woff2); }
+  @font-face { font-family: 'Emilys Candy'; src: url(../../font/EmilysCandy.woff2); }
+  :root { --giallo:#fcbb21; --verde:#7c9b3d; --rosso:#b8292d; --acqua:#63bba2; --arancio:#eb8829; --testo:#1f1d1a; --tenue:#5b554c; --carta:#fffaf0; }
+  @page { size: 148mm 210mm; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; }
+  body { width:560px; height:794px; font-family: Inter, sans-serif; color: var(--testo); background: var(--carta); overflow:hidden; position:relative; }
+  .testata { background: var(--giallo); padding: 34px 28px 0; height: 300px; position: relative; overflow:hidden; }
+  .testata h1 { margin:0; font: 400 50px/1 'Black Ops One', sans-serif; color: var(--rosso); }
+  .testata p { margin:14px 0 0; font: 400 27px/1.25 'Emilys Candy', sans-serif; max-width: 240px; }
+  .testata img { position:absolute; right: 0; bottom: 0; width: 300px; height: 300px; }
+  .strisce { height: 14px; background: linear-gradient(90deg, var(--verde) 0 25%, var(--rosso) 25% 50%, var(--arancio) 50% 75%, var(--acqua) 75% 100%); }
+  .corpo { padding: 18px 28px 0; }
+  .intro { font-size: 15.5px; line-height: 1.4; margin: 0 0 6px; }
+  .fasce { display:flex; gap:6px; margin: 10px 0 14px; flex-wrap: wrap; }
+  .fasce span { font-size: 12.5px; font-weight: 700; padding: 5px 10px; border-radius: 999px; color:#fff; }
+  .link { display:flex; gap:18px; align-items:center; background:#fff; border:1px solid #e8dfcf; border-left: 10px solid var(--arancio); border-radius:14px; padding: 14px 16px; }
+  .link img { width: 118px; height:118px; }
+  .link b { display:block; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--tenue); }
+  .link .url { font-size: 18.5px; font-weight: 800; margin: 4px 0 6px; word-break: break-all; }
+  .link small { font-size: 13px; color: var(--tenue); line-height:1.35; display:block; }
+  .istr { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+  .istr div { background:#fff; border:1px solid #e8dfcf; border-top: 7px solid var(--c); border-radius: 12px; padding: 10px 12px; font-size: 12.5px; line-height: 1.4; }
+  .istr h2 { margin:0 0 4px; font-size: 15px; }
+  .istr ol { margin:0; padding-left: 17px; }
+  .condividi { width: 17px; height: 17px; vertical-align: -3px; }
+  .piede { position:absolute; left:28px; right:28px; bottom: 26px; font-size: 10.5px; color: var(--tenue); line-height:1.4; }
+  .fondo { position:absolute; left:0; right:0; bottom:0; }
+</style></head>
+<body>
+  <div class="testata">
+    <h1>buonApp</h1>
+    <p>Che si mangia<br>oggi a scuola?</p>
+    <img src="../../img/icona-512.png" alt="">
+  </div>
+  <div class="strisce"></div>
+  <div class="corpo">
+    <p class="intro">Il menu del giorno della <b>ristorazione scolastica della Città di Torino</b>, per tutte le diete. Si possono salvare <b>due menu preferiti</b>.</p>
+    <div class="fasce">
+      <span style="background:var(--rosso)">Nidi d’infanzia</span>
+      <span style="background:var(--verde)">Scuole d’infanzia</span>
+      <span style="background:#a3520b">Scuole primarie</span>
+      <span style="background:#2f7f69">Scuole secondarie</span>
+    </div>
+    <div class="link">
+      <img src="qr.svg" alt="">
+      <div>
+        <b>Inquadra il codice o apri</b>
+        <div class="url">entratadisicurezza.com/buonapp</div>
+        <small>Gratuita, senza registrazione e senza raccolta di dati personali.</small>
+      </div>
+    </div>
+    <div class="istr">
+      <div style="--c:var(--verde)">
+        <h2>Android</h2>
+        <ol><li>Apri il link con <b>Chrome</b>.</li><li>Tocca <b>«Installa l’app sul telefono»</b> in fondo alla pagina.</li></ol>
+      </div>
+      <div style="--c:var(--acqua)">
+        <h2>iPhone</h2>
+        <ol><li>Apri il link con <b>Safari</b>.</li><li>Tocca <b>Condividi</b> <svg class="condividi" viewBox="0 0 24 24" aria-label="icona Condividi"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5" fill="none" stroke="#0a84ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.5 10.5H6.5a1 1 0 0 0-1 1V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-8.5a1 1 0 0 0-1-1h-2" fill="none" stroke="#0a84ff" stroke-width="2" stroke-linecap="round"/></svg> e poi <b>«Aggiungi alla schermata Home»</b>.</li></ol>
+      </div>
+    </div>
+  </div>
+  <p class="piede">I menu provengono dai calendari pubblicati dalla Città di Torino. buonApp non è un servizio ufficiale del Comune: in caso di dubbio vale quanto comunicato dalla scuola.</p>
+  <div class="strisce fondo"></div>
+</body></html>

@@ -251,6 +251,24 @@
   // La risposta non serve: il sito decide da solo se scaricare i calendari.
   fetch(API + '/aggiorna', { method: 'POST' }).catch(() => {});
 
+  // Installazione (Android e Chrome): il pulsante in fondo alla pagina compare solo se il browser
+  // permette di installare l'app e se non è già installata.
+  let richiestaInstallazione = null;
+  const installa = document.getElementById('installa');
+  window.addEventListener('beforeinstallprompt', (ev) => {
+    ev.preventDefault();
+    richiestaInstallazione = ev;
+    installa.hidden = false;
+  });
+  installa.addEventListener('click', async () => {
+    if (!richiestaInstallazione) return;
+    richiestaInstallazione.prompt();
+    await richiestaInstallazione.userChoice.catch(() => null);
+    richiestaInstallazione = null;
+    installa.hidden = true;
+  });
+  window.addEventListener('appinstalled', () => { installa.hidden = true; });
+
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
   }

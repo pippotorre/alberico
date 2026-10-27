@@ -37,6 +37,10 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+/* Font della grafica originale (Google Fonts, licenza OFL), solo caratteri latini. */
+@font-face { font-family: "Black Ops One"; src: url(../font/BlackOpsOne.woff2) format("woff2"); font-display: swap; }
+@font-face { font-family: "Emilys Candy"; src: url(../font/EmilysCandy.woff2) format("woff2"); font-display: swap; }
+
 a { color: inherit; }
 
 .testata {
@@ -61,8 +65,8 @@ a { color: inherit; }
   color: #1f1d1a;
 }
 .marchio img { border-radius: 12px; box-shadow: 0 2px 6px rgb(0 0 0 / .2); }
-.marchio strong { display: block; font-size: 1.5rem; line-height: 1.1; letter-spacing: -.01em; }
-.marchio small { display: block; font-size: .95rem; }
+.marchio strong { display: block; font: 400 1.75rem/1.1 "Black Ops One", system-ui, sans-serif; color: #b8292d; }
+.marchio small { display: block; font: 400 1.05rem/1.3 "Emilys Candy", system-ui, sans-serif; }
 
 main {
   max-width: 640px;
@@ -152,6 +156,7 @@ button, .bottone {
 }
 button:focus-visible, a:focus-visible { outline: 3px solid var(--arancio); outline-offset: 2px; }
 
+.installa { background: var(--giallo); border-color: var(--giallo); color: #1f1d1a; font-weight: 600; }
 .preferito[aria-pressed="true"] { background: var(--giallo); border-color: var(--giallo); color: #1f1d1a; }
 
 .avviso {

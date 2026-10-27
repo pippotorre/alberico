@@ -27,7 +27,9 @@ scuola secondaria di primo grado, per tutti i menu disponibili. L'utente può sa
 | 27/10/2026 | App Android sul Play Store come **PWA impacchettata** (Trusted Web Activity): una sola base di codice. Nuovo account sviluppatore (il vecchio è stato disattivato), quindi nuova scheda e nuovo nome del pacchetto. iPhone resta sulla PWA. |
 | 27/10/2026 | Informativa privacy in `privacy.html`: nessun dato personale raccolto, preferiti solo sul dispositivo. |
 | 27/10/2026 | Tophost non permette il deploy automatico: si carica a mano lo ZIP creato da `bin/crea-zip.sh` (cartella `buonapp`). `config.php` si compila e si carica a parte, non è nello ZIP né nel repo. |
-| 26/10/2026 | Un feed vuoto o non scaricabile non cancella i giorni già salvati; l'errore resta in `menu.ultimo_errore`. |
+| 27/10/2026 | Tabelle con prefisso `buonapp_` (`buonapp_fasce`, `buonapp_diete`, `buonapp_menu`, `buonapp_giorni`): il database Tophost è condiviso con altre app. Vale anche per le nuove tabelle. |
+| 27/10/2026 | Titolare per l'informativa privacy: gestore di entratadisicurezza.com, info@entratadisicurezza.com. |
+| 26/10/2026 | Un feed vuoto o non scaricabile non cancella i giorni già salvati; l'errore resta in `buonapp_menu.ultimo_errore`. |
 
 ## Fonte dei dati
 
@@ -57,8 +59,8 @@ sono già online, i calendari non ancora.
   In alternativa `php bin/importa.php` da riga di comando. Legge il feed iCal pubblico di ogni
   calendario (`https://calendar.google.com/calendar/ical/<ID>%40group.calendar.google.com/public/basic.ics`)
   e aggiorna MySQL. Se il Comune corregge un piatto, l'app si aggiorna da sola.
-- **Dati** (`migrations/001_schema.sql`): `fasce`, `diete`, `menu` (fascia + dieta + ID calendario),
-  `giorni` (data + piatti in JSON + testo originale).
+- **Dati** (`migrations/001_schema.sql`, prefisso `buonapp_`): `buonapp_fasce`, `buonapp_diete`,
+  `buonapp_menu` (fascia + dieta + ID calendario), `buonapp_giorni` (data + piatti in JSON + testo originale).
 - **API JSON** sotto `/api/v1/` (`api/index.php` + `src/routes.php`, come in Reserve):
   - `GET /api/v1/menu` → fasce con le loro diete e l'id di ogni menu;
   - `GET /api/v1/menu/{id}/giorni?da=AAAA-MM-GG&a=AAAA-MM-GG` → piatti per giorno (predefinito: 14 giorni da oggi,
@@ -93,7 +95,7 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
 - [ ] Mostrare anche i PDF del Comune (tabelle dietetiche, grammature)?
 - [ ] Notifiche («domani si mangia…») nella prima versione o dopo?
 - [x] Dominio e cartella su Tophost → www.entratadisicurezza.com/buonapp.
-- [ ] Titolare e email di contatto da inserire nell'informativa privacy.
+- [x] Titolare e email di contatto nell'informativa privacy.
 
 ## Passi successivi
 

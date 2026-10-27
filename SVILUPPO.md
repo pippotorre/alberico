@@ -83,6 +83,8 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
 - Slogan: «Che si mangia oggi a scuola?».
 - Nella PWA: testo scuro su fondo chiaro, il colore della fascia solo come bordo (contrasto sufficiente);
   font di sistema per i testi; strisce del banner come fascia sotto la testata.
+- Volantino A5 verticale per WhatsApp (27/10/2026): sorgente in `docs/volantino/` (HTML + QR verso
+  https://www.entratadisicurezza.com/buonapp/), PNG e PDF con `node docs/volantino/rendi.js docs/volantino`.
 - Da fare: un logotipo in SVG al posto del testo «buonApp», schermata di avvio per iPhone.
 
 ## Domande aperte

@@ -45,6 +45,20 @@ ImageDraw.Draw(quadro).ellipse((cx - r, cy - r, cx + r, cy + r), fill=PIATTO + (
 quadro.alpha_composite(p, ((Q - p.width) // 2, (Q - p.height) // 2))
 quadro.save(RADICE / 'img/padella-piatto.png', optimize=True)
 
+# Icone dell'app: la stessa composizione su fondo giallo, così la schermata di sistema di Android
+# (icona sul colore di fondo) coincide con quella di avvio. La maskable resta dentro il cerchio sicuro.
+def icona(lato, quota, nome):
+    f = Image.new('RGBA', (lato, lato), GIALLO + (255,))
+    w = int(lato * quota)
+    f.alpha_composite(quadro.resize((w, w), Image.LANCZOS), ((lato - w) // 2, (lato - w) // 2))
+    f.convert('RGB').save(RADICE / 'img' / nome, optimize=True)
+
+icona(512, 1.15, 'icona-512.png')
+icona(192, 1.15, 'icona-192.png')
+icona(180, 1.15, 'apple-touch-icon.png')
+icona(32, 1.3, 'favicon-32.png')
+icona(512, 0.9, 'icona-maskable-512.png')
+
 for w, h, d in IPHONE:
     crea(w, h, d, 'portrait')
 for w, h, d in IPAD:

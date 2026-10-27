@@ -80,7 +80,8 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
 
 - Palette: giallo, verde oliva, rosso, verde acqua + arancio della padella.
 - Colori per fascia (dal banner): nidi rosso, infanzia verde, primaria giallo, secondaria acqua.
-- Logo «BuonApp» con le lettere che cadono nella padella → icona della PWA.
+- Logo «BuonApp» con le lettere che cadono nella padella. Icona della PWA (dal 27/10/2026): padella su piatto chiaro e fondo giallo,
+  come la schermata di avvio, così su Android la schermata di sistema e quella dell'app coincidono.
 - Slogan: «Che si mangia oggi a scuola?».
 - Nella PWA: testo scuro su fondo chiaro, il colore della fascia solo come bordo (contrasto sufficiente);
   font di sistema per i testi; strisce del banner come fascia sotto la testata.

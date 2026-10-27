@@ -29,6 +29,7 @@ scuola secondaria di primo grado, per tutti i menu disponibili. L'utente può sa
 | 27/10/2026 | Tophost non permette il deploy automatico: si carica a mano lo ZIP creato da `bin/crea-zip.sh` (cartella `buonapp`). `config.php` si compila e si carica a parte, non è nello ZIP né nel repo. |
 | 27/10/2026 | Tabelle con prefisso `buonapp_` (`buonapp_fasce`, `buonapp_diete`, `buonapp_menu`, `buonapp_giorni`): il database Tophost è condiviso con altre app. Vale anche per le nuove tabelle. |
 | 27/10/2026 | Titolare per l'informativa privacy: gestore di entratadisicurezza.com, info@entratadisicurezza.com. |
+| 27/10/2026 | GitHub Actions non raggiunge Tophost: niente workflow. I menu si aggiornano quando qualcuno apre l'app (`POST /api/v1/aggiorna`), al massimo ogni 6 ore; la prenotazione in `buonapp_stato` evita doppi aggiornamenti. `GET /api/v1/stato` mostra l'esito. |
 | 26/10/2026 | Un feed vuoto o non scaricabile non cancella i giorni già salvati; l'errore resta in `buonapp_menu.ultimo_errore`. |
 
 ## Fonte dei dati
@@ -54,9 +55,9 @@ sono già online, i calendari non ancora.
 
 ## Architettura
 
-- **Importatore**: `.github/workflows/importa.yml` ogni giorno feriale alle 5:15 (ora solare) chiama
-  `POST /api/v1/importa` con `Authorization: Bearer <IMPORT_TOKEN>`; si può lanciare a mano da Actions → *Run workflow*.
-  In alternativa `php bin/importa.php` da riga di comando. Legge il feed iCal pubblico di ogni
+- **Importatore**: all'apertura l'app chiama `POST /api/v1/aggiorna`; se l'ultimo tentativo ha più di 6 ore
+  il sito scarica i calendari in quella richiesta (l'app non la aspetta). Forzabile con `POST /api/v1/importa` e token,
+  o da riga di comando con `php bin/importa.php`. Legge il feed iCal pubblico di ogni
   calendario (`https://calendar.google.com/calendar/ical/<ID>%40group.calendar.google.com/public/basic.ics`)
   e aggiorna MySQL. Se il Comune corregge un piatto, l'app si aggiorna da sola.
 - **Dati** (`migrations/001_schema.sql`, prefisso `buonapp_`): `buonapp_fasce`, `buonapp_diete`,
@@ -91,7 +92,7 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
   e, se c'è, la prima data disponibile.
 - [x] Importatore → GitHub Actions che chiama il sito.
 - [x] «Messaggio alle famiglie» → testo formale nella PWA quando il menu manca, con link al calendario ufficiale.
-- [ ] Il server Tophost raggiunge `calendar.google.com`? (si vede alla prima esecuzione del workflow)
+- [ ] Il server Tophost raggiunge `calendar.google.com`? (si vede in `/api/v1/stato` dopo la prima apertura)
 - [ ] Mostrare anche i PDF del Comune (tabelle dietetiche, grammature)?
 - [ ] Notifiche («domani si mangia…») nella prima versione o dopo?
 - [x] Dominio e cartella su Tophost → www.entratadisicurezza.com/buonapp.
@@ -102,7 +103,7 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
 1. Creare il database su Tophost ed eseguire `migrations/001_schema.sql` in phpMyAdmin.
 2. Copiare `src/config.example.php` in `src/config.php` sul server.
 3. Caricare la cartella `buonapp` dallo ZIP (`sh bin/crea-zip.sh`) e `src/config.php` compilato.
-4. Impostare su GitHub il secret `IMPORT_TOKEN` e la variabile `SITE_URL`, e mettere lo stesso token in `src/config.php`.
+4. Eseguire `migrations/002_stato.sql` e controllare `/api/v1/stato` dopo la prima apertura dell'app.
 5. Ricontrollare i calendari dopo il 2 novembre.
 
 ## Play Store (piano)
@@ -124,3 +125,4 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
 |---|---|---|
 | 26/10/2026 | L'ambiente cloud non raggiungeva `www.comune.torino.it` e `calendar.google.com`. | Pagina letta dal browser dell'utente; calendario letto con il connettore Google Calendar. Il deploy e l'importatore girano fuori da qui. |
 | 27/10/2026 | Tophost non consente il deploy automatico via FTP da GitHub. | Pacchetto ZIP creato dal repo e caricato a mano; `config.php` separato. |
+| 27/10/2026 | Il workflow «Importa i menu» falliva: `curl: (28) Failed to connect … port 443` (Tophost non accetta connessioni dai server di GitHub). | Aggiornamento avviato dalle visite all'app; workflow rimosso. |

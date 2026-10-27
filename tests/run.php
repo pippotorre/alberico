@@ -127,5 +127,26 @@ verifica('importa: tutti i calendari falliti → 502', $codice === 502);
 // --- Link al calendario ufficiale ---
 verifica('api: link al calendario ufficiale', $elenco[4]['diete'][0]['calendario'] === 'https://calendar.google.com/calendar/embed?src=hqmct17n9uhpn10l9k9hoc08lo%40group.calendar.google.com&ctz=Europe%2FRome', $elenco[4]['diete'][0]['calendario']);
 
+// --- Aggiornamento automatico ---
+$pdo2 = nuovoDb();
+$ora = new DateTimeImmutable('2026-10-27 10:00:00');
+verifica('aggiornamento: il primo tentativo parte', Aggiornamento::prenota($pdo2, $ora) === true);
+verifica('aggiornamento: subito dopo non riparte', Aggiornamento::prenota($pdo2, $ora->modify('+1 minute')) === false);
+verifica('aggiornamento: dopo 5 ore non riparte', Aggiornamento::prenota($pdo2, $ora->modify('+5 hours')) === false);
+verifica('aggiornamento: dopo 7 ore riparte', Aggiornamento::prenota($pdo2, $ora->modify('+7 hours')) === true);
+$pdo2->exec('DELETE FROM buonapp_stato');
+verifica('aggiornamento: riga mancante → la crea e parte', Aggiornamento::prenota($pdo2, $ora) === true && Aggiornamento::ultimoTentativo($pdo2) === '2026-10-27 10:00:00');
+
+$chiamate = 0;
+$conta = function () use (&$chiamate) { $chiamate++; return [['menu' => 'a', 'giorni' => 5, 'errore' => null]]; };
+$pdo3 = nuovoDb();
+[$codice, $r] = Api::aggiorna($pdo3, $ora, $conta);
+verifica('aggiorna: prima chiamata importa → 200', $codice === 200 && $chiamate === 1 && $r['importati'] === 1, $r);
+[$codice, $r] = Api::aggiorna($pdo3, $ora->modify('+10 minutes'), $conta);
+verifica('aggiorna: chiamata ravvicinata → 204 senza importare', $codice === 204 && $r === null && $chiamate === 1);
+
+$s = Api::stato($pdo);
+verifica('stato: riepilogo dei menu', $s['menu'] === 40 && $s['menu_con_giorni'] === 1 && $s['ultimo_giorno_pubblicato'] === '2026-10-16' && count($s['errori']) === 39, $s);
+
 echo $falliti === 0 ? "\nTutte le prove sono passate.\n" : "\n$falliti prove fallite.\n";
 exit($falliti === 0 ? 0 : 1);

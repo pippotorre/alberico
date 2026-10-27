@@ -18,3 +18,5 @@ CREATE TABLE buonapp_giorni (
   testo TEXT NOT NULL,
   PRIMARY KEY (menu_id, data)
 );
+CREATE TABLE buonapp_stato (chiave TEXT PRIMARY KEY, valore TEXT NOT NULL);
+INSERT OR IGNORE INTO buonapp_stato (chiave, valore) VALUES ('ultimo_tentativo', '2000-01-01 00:00:00');

@@ -245,7 +245,17 @@
     }
   }
   window.addEventListener('hashchange', vai);
-  vai();
+
+  // La schermata di avvio resta almeno 0,8 secondi e si chiude quando la prima vista è pronta.
+  const avvio = document.getElementById('avvio');
+  const inizio = Date.now();
+  function chiudiAvvio() {
+    if (!avvio || avvio.classList.contains('chiuso')) return;
+    avvio.classList.add('chiuso');
+    setTimeout(() => avvio.remove(), 400);
+  }
+  vai().finally(() => setTimeout(chiudiAvvio, Math.max(0, 800 - (Date.now() - inizio))));
+  setTimeout(chiudiAvvio, 4000);
 
   // Chiede al sito di aggiornare i menu, se è passato abbastanza tempo dall'ultima volta.
   // La risposta non serve: il sito decide da solo se scaricare i calendari.

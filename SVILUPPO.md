@@ -88,7 +88,9 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
   **Emilys Candy** (simile ai riccioli del vecchio volantino). Google Fonts OFL, file in `font/`, solo caratteri latini.
 - Schermata di avvio (27/10/2026): padella con le lettere (`img/padella.png`, immagine fornita dall'utente) su fondo giallo,
   con un piatto chiaro dietro perché le lettere gialle si vedano. iPhone e iPad: `img/avvio/` e tag in `index.html`,
-  rigenerabili con `python3 docs/avvio/genera.py`; Android: colore di fondo giallo nel manifest.
+  rigenerabili con `python3 docs/avvio/genera.py`; Android: Chrome compone da solo la schermata di sistema (icona + colore), quindi l'app installata
+  mostra subito dopo una schermata di avvio in HTML (`#avvio`, `img/padella-piatto.png`) identica a quella di iPhone e iPad,
+  per almeno 0,8 secondi. Con l'app del Play Store (TWA) si potrà usare la padella anche nella schermata di sistema.
 - Volantino A5 verticale per WhatsApp (27/10/2026): sorgente in `docs/volantino/` (padella su strisce colorate, solo lo slogan, HTML + QR verso
   https://www.entratadisicurezza.com/buonapp/), PNG e PDF con `node docs/volantino/rendi.js docs/volantino`.
 - Da fare: un logotipo in SVG al posto del testo «buonApp», schermata di avvio per iPhone.

@@ -33,6 +33,18 @@ def crea(w, h, d, orientamento):
     print(f'  <link rel="apple-touch-startup-image" href="img/avvio/{nome}" media="(device-width: {w}px) and '
           f'(device-height: {h}px) and (-webkit-device-pixel-ratio: {d}) and (orientation: {orientamento})">')
 
+# Stessa composizione su fondo trasparente, per la schermata di avvio in HTML (Android e altri browser):
+# quadrato 1,2 volte la padella (il piatto sporge a destra), da mostrare al centro largo 74.4vmin (= 62 × 1,2).
+L = 600
+p = padella.resize((L, round(padella.height * L / padella.width)), Image.LANCZOS)
+Q = int(L * 1.2)
+quadro = Image.new('RGBA', (Q, Q), (0, 0, 0, 0))
+r = int(L * 0.42)
+cx, cy = Q // 2 + int(L * 0.12), Q // 2 - int(p.height * 0.08)
+ImageDraw.Draw(quadro).ellipse((cx - r, cy - r, cx + r, cy + r), fill=PIATTO + (255,))
+quadro.alpha_composite(p, ((Q - p.width) // 2, (Q - p.height) // 2))
+quadro.save(RADICE / 'img/padella-piatto.png', optimize=True)
+
 for w, h, d in IPHONE:
     crea(w, h, d, 'portrait')
 for w, h, d in IPAD:

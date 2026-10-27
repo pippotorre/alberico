@@ -85,7 +85,10 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
   font di sistema per i testi; strisce del banner come fascia sotto la testata.
 - Font (27/10/2026): «buonApp» in **Black Ops One** (simile alle lettere a blocchi del logo), slogan in
   **Emilys Candy** (simile ai riccioli del vecchio volantino). Google Fonts OFL, file in `font/`, solo caratteri latini.
-- Volantino A5 verticale per WhatsApp (27/10/2026): sorgente in `docs/volantino/` (HTML + QR verso
+- Schermata di avvio (27/10/2026): padella con le lettere (`img/padella.png`, immagine fornita dall'utente) su fondo giallo,
+  con un piatto chiaro dietro perché le lettere gialle si vedano. iPhone e iPad: `img/avvio/` e tag in `index.html`,
+  rigenerabili con `python3 docs/avvio/genera.py`; Android: colore di fondo giallo nel manifest.
+- Volantino A5 verticale per WhatsApp (27/10/2026): sorgente in `docs/volantino/` (padella su strisce colorate, solo lo slogan, HTML + QR verso
   https://www.entratadisicurezza.com/buonapp/), PNG e PDF con `node docs/volantino/rendi.js docs/volantino`.
 - Da fare: un logotipo in SVG al posto del testo «buonApp», schermata di avvio per iPhone.
 

@@ -17,7 +17,7 @@ php "$radice/tests/run.php" > /dev/null || { echo "Le prove non passano: ZIP non
 mkdir "$lavoro/buonapp"
 # Solo i file tracciati da git: niente file locali, copie del database o config.php compilati.
 git -C "$radice" archive --format=tar HEAD \
-  ':(exclude)tests' ':(exclude)migrations' ':(exclude).github' \
+  ':(exclude)tests' ':(exclude)migrations' ':(exclude).github' ':(exclude)docs' \
   ':(exclude)README.md' ':(exclude)SVILUPPO.md' ':(exclude).gitignore' ':(exclude).gitattributes' \
   ':(exclude)src/config.php' ':(exclude)bin/crea-zip.sh' \
   | tar -x -C "$lavoro/buonapp"

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>buonApp · Che si mangia oggi a scuola?</title>
+  <meta name="description" content="Il menu del giorno delle scuole di Torino, dal nido alle medie, per tutte le diete.">
+  <meta name="theme-color" content="#fcbb21">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="buonApp">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header class="testata">
+    <div class="strisce" aria-hidden="true"></div>
+    <a class="marchio" href="#/">
+      <img src="img/icona-192.png" alt="" width="56" height="56">
+      <span>
+        <strong>buonApp</strong>
+        <small>Che si mangia oggi a scuola?</small>
+      </span>
+    </a>
+  </header>
+
+  <main id="vista" tabindex="-1" aria-live="polite">
+    <p class="caricamento">Carico i menu…</p>
+  </main>
+
+  <footer class="piede">
+    <p>Menu della ristorazione scolastica della Città di Torino, presi dai calendari pubblicati dal Comune.
+      In caso di dubbio vale quanto comunicato dalla scuola.</p>
+    <p id="aggiornato"></p>
+  </footer>
+
+  <script src="js/app.js" defer></script>
+</body>
+</html>

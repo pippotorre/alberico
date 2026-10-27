@@ -2,3 +2,6 @@ config.php
 src/config.php
 .DS_Store
 *.sql
+!migrations/*.sql
+*.sqlite
+!tests/schema_sqlite.sql

@@ -1,0 +1,86 @@
+%% buonApp: interazioni tra i componenti (diagramma di sequenza Mermaid)
+sequenceDiagram
+    autonumber
+    actor F as Famiglia
+    actor G as Gestore del sito
+    participant App as PWA (index.html, app.js)
+    participant LS as localStorage
+    participant SW as Service worker (sw.js)
+    participant API as API PHP (/api/v1)
+    participant DB as MySQL (tabelle buonapp_)
+    participant GC as Google Calendar del Comune
+
+    Note over F,GC: Apertura dell'app
+    F->>App: apre buonApp (browser o icona sulla Home)
+    App->>SW: richiede l'interfaccia (HTML, CSS, JS, font, icone)
+    SW-->>App: copia in cache, intanto la aggiorna in sottofondo
+    App->>LS: legge i menu preferiti (massimo 2)
+    LS-->>App: id dei preferiti
+
+    Note over App,GC: Aggiornamento dei menu avviato dalla visita
+    App-)API: POST /aggiorna (senza attendere la risposta)
+    API->>DB: prenota l'aggiornamento in buonapp_stato (UPDATE atomico)
+    alt ultimo tentativo da meno di 6 ore
+        API--)App: 204, nessun aggiornamento
+    else aggiornamento dovuto
+        loop per ognuno dei 40 calendari
+            API->>GC: GET feed iCal pubblico (basic.ics)
+            alt feed con eventi
+                GC-->>API: eventi (un giorno, un menu)
+                API->>DB: sostituisce i giorni del menu (transazione)
+            else feed vuoto o errore
+                API->>DB: tiene i giorni salvati e registra ultimo_errore
+            end
+        end
+        API--)App: 200, riepilogo dell'importazione
+    end
+
+    Note over F,DB: Scelta del menu
+    App->>SW: GET /menu
+    SW->>API: prima la rete (no-cache)
+    API->>DB: elenco di fasce, diete e menu
+    opt elenco vuoto (primo avvio)
+        API->>DB: crea fasce, diete e menu da Calendari.php
+    end
+    DB-->>API: fasce con diete e link al calendario ufficiale
+    API-->>SW: JSON (Cache-Control no-store)
+    SW-->>App: risposta, con una copia per l'uso offline
+    F->>App: sceglie fascia, età (solo nidi) e dieta
+
+    App->>SW: GET /menu/ID/giorni?da=...&a=...
+    SW->>API: prima la rete
+    API->>DB: giorni nell'intervallo e prima data pubblicata dopo
+    DB-->>API: piatti per giorno
+    API-->>SW: menu, giorni, prossimo
+    SW-->>App: risposta
+    alt ci sono giorni pubblicati
+        App-->>F: piatti della settimana, oggi evidenziato
+    else nessun giorno pubblicato
+        App-->>F: messaggio formale e link Vai al calendario ufficiale
+    end
+
+    opt senza connessione
+        SW-->>App: ultima risposta salvata in cache
+    end
+
+    F->>App: aggiunge o toglie un preferito
+    App->>LS: salva i preferiti (solo sul dispositivo)
+
+    Note over F,App: Installazione
+    opt Android con Chrome
+        App-->>F: pulsante Installa l'app sul telefono
+        F->>App: tocca il pulsante e conferma
+    end
+    opt iPhone e iPad
+        F->>App: Condividi, poi Aggiungi alla schermata Home
+    end
+
+    Note over G,DB: Controllo e manutenzione
+    G->>API: GET /stato
+    API->>DB: ultimo tentativo, menu con giorni, errori
+    API-->>G: riepilogo JSON
+    opt importazione forzata
+        G->>API: POST /importa con token
+        API->>GC: scarica tutti i calendari (come sopra)
+        API-->>G: 200, 401, 502 o 503
+    end

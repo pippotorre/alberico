@@ -70,6 +70,7 @@ sono già online, i calendari non ancora.
 - **PWA** (`index.html`, `js/app.js`, `css/app.css`, `manifest.webmanifest`, `sw.js`): home con i preferiti
   (oggi o primo giorno utile), scelta per fascia → età (solo nidi) → dieta, vista settimanale con frecce.
   Il service worker tiene in cache l'interfaccia e le ultime risposte dell'API: si apre anche offline.
+- **Diagramma di sequenza** delle interazioni tra i componenti: `docs/architettura-sequenza.mmd` (da incollare in Mermaid).
 - **Prove:** `php tests/run.php` (SQLite in memoria, nessuna rete; feed di esempio in `tests/fixtures/`).
 - **Nessun dato personale** raccolto nella prima versione.
 

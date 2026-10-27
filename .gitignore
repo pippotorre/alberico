@@ -5,3 +5,4 @@ src/config.php
 !migrations/*.sql
 *.sqlite
 !tests/schema_sqlite.sql
+dist/

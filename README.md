@@ -18,10 +18,16 @@ Le decisioni e il diario del progetto sono in [SVILUPPO.md](SVILUPPO.md).
 
 ## Installazione su Tophost
 
-1. Eseguire `migrations/001_schema.sql` in phpMyAdmin.
-2. Copiare `src/config.example.php` in `src/config.php` e inserire i dati del database.
-3. Generare un token (`php -r 'echo bin2hex(random_bytes(32));'`) e metterlo in `src/config.php`
-   (`token_importazione`) e su GitHub come secret `IMPORT_TOKEN`; aggiungere la variabile `SITE_URL`.
-4. Lanciare a mano il workflow *Importa i menu* (Actions → Run workflow); poi gira da solo ogni mattina.
+Tophost non permette il deploy automatico: il sito si carica a mano.
+
+1. Creare il database MySQL su Tophost ed eseguire `migrations/001_schema.sql` in phpMyAdmin
+   (con le versioni successive, solo le nuove migrazioni, nell'ordine dei numeri e dopo un backup).
+2. Creare lo ZIP con `sh bin/crea-zip.sh` (finisce in `dist/buonapp.zip`), estrarlo e caricare la cartella
+   `buonapp` nella radice del sito, in modo che risponda su https://www.entratadisicurezza.com/buonapp.
+3. Copiare `src/config.example.php`, compilarlo e caricarlo come `buonapp/src/config.php`.
+   Lo ZIP non contiene `config.php`, quindi gli aggiornamenti successivi non lo sovrascrivono.
+4. Su GitHub (Settings → Secrets and variables → Actions) impostare il secret `IMPORT_TOKEN`, uguale a
+   `token_importazione` di `config.php`, e la variabile `SITE_URL` = `https://www.entratadisicurezza.com/buonapp`.
+5. Lanciare a mano il workflow *Importa i menu* (Actions → Run workflow); poi gira da solo ogni mattina.
 
 `src/config.php` non va mai nel repository.

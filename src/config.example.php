@@ -1,10 +1,12 @@
 <?php
-// Copiare in src/config.php sul server e inserire i dati veri.
-// src/config.php non va mai nel repository (è in .gitignore) e il deploy non lo carica.
+// Modello di src/config.php: si compila con i dati veri e si carica a mano su Tophost
+// in buonapp/src/config.php. Non va mai nel repository (è in .gitignore) e non è nello ZIP,
+// così caricare una nuova versione del sito non lo sovrascrive.
 
 return [
     'db' => [
-        'dsn'      => 'mysql:host=localhost;dbname=NOME_DATABASE;charset=utf8mb4',
+        // Host e nome del database si trovano nel pannello Tophost, sezione Database MySQL.
+        'dsn'      => 'mysql:host=HOST_DATABASE;dbname=NOME_DATABASE;charset=utf8mb4',
         'utente'   => 'UTENTE',
         'password' => 'PASSWORD',
     ],

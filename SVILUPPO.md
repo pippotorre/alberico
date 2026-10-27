@@ -26,7 +26,7 @@ scuola secondaria di primo grado, per tutti i menu disponibili. L'utente può sa
 | 27/10/2026 | Indirizzo del sito: **https://www.entratadisicurezza.com/buonapp** (Tophost). |
 | 27/10/2026 | App Android sul Play Store come **PWA impacchettata** (Trusted Web Activity): una sola base di codice. Nuovo account sviluppatore (il vecchio è stato disattivato), quindi nuova scheda e nuovo nome del pacchetto. iPhone resta sulla PWA. |
 | 27/10/2026 | Informativa privacy in `privacy.html`: nessun dato personale raccolto, preferiti solo sul dispositivo. |
-| 27/10/2026 | Deploy come Reserve: `.github/workflows/deploy.yml` con `lftp` a ogni merge su `main`, prova a vuoto da Actions. |
+| 27/10/2026 | Tophost non permette il deploy automatico: si carica a mano lo ZIP creato da `bin/crea-zip.sh` (cartella `buonapp`). `config.php` si compila e si carica a parte, non è nello ZIP né nel repo. |
 | 26/10/2026 | Un feed vuoto o non scaricabile non cancella i giorni già salvati; l'errore resta in `menu.ultimo_errore`. |
 
 ## Fonte dei dati
@@ -97,9 +97,9 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
 
 ## Passi successivi
 
-1. Creare il database su Tophost ed eseguire `migrations/001_schema.sql`.
+1. Creare il database su Tophost ed eseguire `migrations/001_schema.sql` in phpMyAdmin.
 2. Copiare `src/config.example.php` in `src/config.php` sul server.
-3. Workflow di deploy (`.github/workflows/deploy.yml` con `lftp`, come Reserve).
+3. Caricare la cartella `buonapp` dallo ZIP (`sh bin/crea-zip.sh`) e `src/config.php` compilato.
 4. Impostare su GitHub il secret `IMPORT_TOKEN` e la variabile `SITE_URL`, e mettere lo stesso token in `src/config.php`.
 5. Ricontrollare i calendari dopo il 2 novembre.
 
@@ -121,3 +121,4 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
 | Data | Problema | Soluzione |
 |---|---|---|
 | 26/10/2026 | L'ambiente cloud non raggiungeva `www.comune.torino.it` e `calendar.google.com`. | Pagina letta dal browser dell'utente; calendario letto con il connettore Google Calendar. Il deploy e l'importatore girano fuori da qui. |
+| 27/10/2026 | Tophost non consente il deploy automatico via FTP da GitHub. | Pacchetto ZIP creato dal repo e caricato a mano; `config.php` separato. |

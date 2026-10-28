@@ -2,12 +2,15 @@
 // Scarica i calendari del Comune e aggiorna il database.
 // Per ogni menu il contenuto del feed sostituisce quello salvato: se il Comune corregge un piatto,
 // la correzione arriva al giro successivo. Un feed vuoto o non scaricabile non cancella nulla.
-// Lo storico non serve: si tengono solo i giorni dal primo del mese in corso, i più vecchi si cancellano.
+// Lo storico non serve: si tiene solo l'ultimo mese (oggi meno 31 giorni), i giorni più vecchi si cancellano.
 
 final class Importer
 {
     /** @var callable(string): string */
     private $scarica;
+
+    /** Giorni passati da tenere: oggi 28/10 si vede fino al 27/09. */
+    public const GIORNI_CONSERVATI = 31;
 
     /** Primo giorno conservato (AAAA-MM-GG). */
     private string $conservaDal;
@@ -15,7 +18,7 @@ final class Importer
     public function __construct(private PDO $pdo, ?callable $scarica = null, private string $fuso = 'Europe/Rome', ?string $conservaDal = null)
     {
         $this->scarica = $scarica ?? [self::class, 'scaricaHttp'];
-        $this->conservaDal = $conservaDal ?? (new DateTimeImmutable('first day of this month', new DateTimeZone($fuso)))->format('Y-m-d');
+        $this->conservaDal = $conservaDal ?? (new DateTimeImmutable('today -' . self::GIORNI_CONSERVATI . ' days', new DateTimeZone($fuso)))->format('Y-m-d');
     }
 
     /** Allinea fasce, diete e menu del database all'elenco in Calendari. */

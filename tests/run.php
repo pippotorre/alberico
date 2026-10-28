@@ -83,7 +83,7 @@ verifica('importer: elenco senza duplicati', (int) $pdo->query('SELECT COUNT(*) 
 $tabelle = $pdo->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name <> 'sqlite_sequence'")->fetchAll(PDO::FETCH_COLUMN);
 verifica('schema: tutte le tabelle hanno il prefisso buonapp_', $tabelle !== [] && array_filter($tabelle, fn($t) => !str_starts_with($t, 'buonapp_')) === [], $tabelle);
 
-// --- Storico: si tengono solo i giorni dal primo del mese in corso ---
+// --- Storico: si tiene solo l'ultimo mese ---
 $pdoS = nuovoDb();
 (new Importer($pdoS, fn() => $ics, conservaDal: '2026-01-01'))->importaTutti();
 $giro = (new Importer($pdoS, function (string $url) use ($ics) {
@@ -97,7 +97,7 @@ verifica('storico: i giorni prima del 01/10 non tornano con l\'importazione', $d
 $restano = (int) $pdoS->query("SELECT COUNT(*) FROM buonapp_giorni g JOIN buonapp_menu m ON m.id = g.menu_id WHERE m.calendar_id = 'alhf1h0c8rtq7oeq0bq6i9jff8'")->fetchColumn();
 verifica('storico: cancellati anche per il menu che non si scarica', $restano === 1, $restano);
 $predefinito = (new ReflectionProperty(Importer::class, 'conservaDal'))->getValue(new Importer($pdoS));
-verifica('storico: predefinito il primo del mese in corso', $predefinito === (new DateTime('first day of this month', new DateTimeZone('Europe/Rome')))->format('Y-m-d'), $predefinito);
+verifica('storico: predefinito oggi meno 31 giorni', $predefinito === (new DateTime('today -31 days', new DateTimeZone('Europe/Rome')))->format('Y-m-d'), $predefinito);
 
 // --- Api ---
 $elenco = Api::elencoMenu($pdo)['fasce'];

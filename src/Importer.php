@@ -2,15 +2,20 @@
 // Scarica i calendari del Comune e aggiorna il database.
 // Per ogni menu il contenuto del feed sostituisce quello salvato: se il Comune corregge un piatto,
 // la correzione arriva al giro successivo. Un feed vuoto o non scaricabile non cancella nulla.
+// Lo storico non serve: si tengono solo i giorni dal primo del mese in corso, i più vecchi si cancellano.
 
 final class Importer
 {
     /** @var callable(string): string */
     private $scarica;
 
-    public function __construct(private PDO $pdo, ?callable $scarica = null, private string $fuso = 'Europe/Rome')
+    /** Primo giorno conservato (AAAA-MM-GG). */
+    private string $conservaDal;
+
+    public function __construct(private PDO $pdo, ?callable $scarica = null, private string $fuso = 'Europe/Rome', ?string $conservaDal = null)
     {
         $this->scarica = $scarica ?? [self::class, 'scaricaHttp'];
+        $this->conservaDal = $conservaDal ?? (new DateTimeImmutable('first day of this month', new DateTimeZone($fuso)))->format('Y-m-d');
     }
 
     /** Allinea fasce, diete e menu del database all'elenco in Calendari. */
@@ -48,6 +53,8 @@ final class Importer
     public function importaTutti(): array
     {
         $this->sincronizzaElenco();
+        // Anche i menu il cui feed non si scarica perdono i giorni passati.
+        $this->pdo->prepare('DELETE FROM buonapp_giorni WHERE data < ?')->execute([$this->conservaDal]);
         $esiti = [];
         $menu = $this->pdo->query('SELECT id, fascia_id, dieta_id, calendar_id FROM buonapp_menu WHERE attivo = 1 ORDER BY id')->fetchAll();
         foreach ($menu as $m) {
@@ -73,6 +80,8 @@ final class Importer
                 ->execute([mb_substr($e->getMessage(), 0, 255), $menuId]);
             return ['giorni' => 0, 'errore' => $e->getMessage()];
         }
+
+        $giorni = array_filter($giorni, fn($data) => $data >= $this->conservaDal, ARRAY_FILTER_USE_KEY);
 
         $this->pdo->beginTransaction();
         $this->pdo->prepare('DELETE FROM buonapp_giorni WHERE menu_id = ?')->execute([$menuId]);

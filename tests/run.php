@@ -55,7 +55,7 @@ $importer = new Importer($pdo, function (string $url) use ($ics, &$scaricati): s
         throw new RuntimeException('download fallito (HTTP 404)');
     }
     return "BEGIN:VCALENDAR\r\nEND:VCALENDAR\r\n";
-});
+}, conservaDal: '2026-01-01');
 $esiti = $importer->importaTutti();
 $numMenu = array_sum(array_map('count', Calendari::CALENDARI));
 verifica('importer: un download per ogni menu', count($scaricati) === $numMenu && $numMenu === 40, count($scaricati));
@@ -66,13 +66,13 @@ $err = $pdo->query("SELECT ultimo_errore FROM buonapp_menu WHERE calendar_id = '
 verifica('importer: errore di download registrato', str_contains((string) $err, '404'), $err);
 
 // Un secondo giro con il feed vuoto non deve cancellare i giorni già salvati.
-$vuoto = new Importer($pdo, fn() => "BEGIN:VCALENDAR\r\nEND:VCALENDAR\r\n");
+$vuoto = new Importer($pdo, fn() => "BEGIN:VCALENDAR\r\nEND:VCALENDAR\r\n", conservaDal: '2026-01-01');
 $vuoto->importa((int) $primaria, 'hqmct17n9uhpn10l9k9hoc08lo');
 verifica('importer: feed vuoto non cancella nulla', (int) $pdo->query("SELECT COUNT(*) FROM buonapp_giorni WHERE menu_id = $primaria")->fetchColumn() === 4);
 
 // Una correzione del Comune sostituisce il giorno.
 $corretto = str_replace('PASTA ALLE ZUCCHINE', 'PASTA AL POMODORO', $ics);
-(new Importer($pdo, fn() => $corretto))->importa((int) $primaria, 'hqmct17n9uhpn10l9k9hoc08lo');
+(new Importer($pdo, fn() => $corretto, conservaDal: '2026-01-01'))->importa((int) $primaria, 'hqmct17n9uhpn10l9k9hoc08lo');
 $piatti = json_decode($pdo->query("SELECT piatti FROM buonapp_giorni WHERE menu_id = $primaria AND data = '2026-09-01'")->fetchColumn(), true);
 verifica('importer: la correzione sostituisce il piatto', $piatti[0] === 'Pasta al pomodoro', $piatti);
 
@@ -82,6 +82,22 @@ verifica('importer: elenco senza duplicati', (int) $pdo->query('SELECT COUNT(*) 
 
 $tabelle = $pdo->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name <> 'sqlite_sequence'")->fetchAll(PDO::FETCH_COLUMN);
 verifica('schema: tutte le tabelle hanno il prefisso buonapp_', $tabelle !== [] && array_filter($tabelle, fn($t) => !str_starts_with($t, 'buonapp_')) === [], $tabelle);
+
+// --- Storico: si tengono solo i giorni dal primo del mese in corso ---
+$pdoS = nuovoDb();
+(new Importer($pdoS, fn() => $ics, conservaDal: '2026-01-01'))->importaTutti();
+$giro = (new Importer($pdoS, function (string $url) use ($ics) {
+    if (str_contains($url, 'alhf1h0c8rtq7oeq0bq6i9jff8')) {
+        throw new RuntimeException('download fallito');
+    }
+    return $ics;
+}, conservaDal: '2026-10-01'))->importaTutti();
+$date = $pdoS->query('SELECT DISTINCT data FROM buonapp_giorni ORDER BY data')->fetchAll(PDO::FETCH_COLUMN);
+verifica('storico: i giorni prima del 01/10 non tornano con l\'importazione', $date === ['2026-10-16'], $date);
+$restano = (int) $pdoS->query("SELECT COUNT(*) FROM buonapp_giorni g JOIN buonapp_menu m ON m.id = g.menu_id WHERE m.calendar_id = 'alhf1h0c8rtq7oeq0bq6i9jff8'")->fetchColumn();
+verifica('storico: cancellati anche per il menu che non si scarica', $restano === 1, $restano);
+$predefinito = (new ReflectionProperty(Importer::class, 'conservaDal'))->getValue(new Importer($pdoS));
+verifica('storico: predefinito il primo del mese in corso', $predefinito === (new DateTime('first day of this month', new DateTimeZone('Europe/Rome')))->format('Y-m-d'), $predefinito);
 
 // --- Api ---
 $elenco = Api::elencoMenu($pdo)['fasce'];

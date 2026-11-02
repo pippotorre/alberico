@@ -101,7 +101,10 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
 
 ## Domande aperte
 
-- [ ] Dopo il 2 novembre il Comune riusa gli stessi calendari o ne crea di nuovi? (ricontrollare)
+- [x] Dopo il 2 novembre il Comune riusa gli stessi calendari? Sì: verificato il 02/11/2026 (primaria, secondaria,
+  infanzia e nido 6–9 ordinari hanno il menu invernale dal 2/11), gli ID restano validi.
+- [ ] Menu invernale: in infanzia e nidi dopo i piatti c'è un punto e una seconda parte (es. «PANE .PIZZA AL POMODORO»,
+  «BANANA. FRULLATO DI FRUTTA»), probabilmente la merenda. Oggi `Piatti` la fonde con l'ultimo piatto: da correggere.
 - [ ] Il server Tophost riesce a scaricare i feed da `calendar.google.com`?
 - [x] Cosa mostrare quando un menu non è ancora pubblicato → messaggio «Il Comune non ha ancora pubblicato…»
   e, se c'è, la prima data disponibile.

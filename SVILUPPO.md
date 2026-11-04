@@ -31,6 +31,7 @@ scuola secondaria di primo grado, per tutti i menu disponibili. L'utente può sa
 | 27/10/2026 | Titolare per l'informativa privacy: gestore di entratadisicurezza.com, info@entratadisicurezza.com. |
 | 27/10/2026 | GitHub Actions non raggiunge Tophost: niente workflow. I menu si aggiornano quando qualcuno apre l'app (`POST /api/v1/aggiorna`), al massimo ogni 6 ore; la prenotazione in `buonapp_stato` evita doppi aggiornamenti. `GET /api/v1/stato` mostra l'esito. |
 | 27/10/2026 | Pulsante «Installa l’app sul telefono» in fondo alla pagina: compare solo dove il browser lo consente (Android/Chrome) e se l'app non è già installata. |
+| 28/10/2026 | Niente storico: l'importatore tiene solo l'ultimo mese, cioè da oggi meno 31 giorni (il 28/10 si vede fino al 27/09), e a ogni aggiornamento cancella i giorni più vecchi (anche per i menu il cui feed non si scarica). Pulizia iniziale con `pulizia-giorni-oltre-un-mese.sql` nei file del progetto. |
 | 26/10/2026 | Un feed vuoto o non scaricabile non cancella i giorni già salvati; l'errore resta in `buonapp_menu.ultimo_errore`. |
 | 27/10/2026 | **Statistiche di visita con GoatCounter** (senza cookie, nessun dato personale), account unico del dominio https://entratadisicurezza.goatcounter.com. Script in `index.html`; percorso inviato senza `index.html` (`/buonapp/`). Eventi in `js/app.js` (funzione `conta`): `buonapp-installa-clic`, `buonapp-installa-rifiutata`, `buonapp-installata` (anche installando dal menu di Chrome). Se lo script è bloccato (blocco pubblicità, offline) l'app funziona uguale. |
 | 27/10/2026 | Informativa privacy aggiornata: tolto «non utilizza strumenti di statistica», aggiunta la sezione «Statistiche di visita». Service worker `buonapp-v13`. |
@@ -100,7 +101,11 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
 
 ## Domande aperte
 
-- [ ] Dopo il 2 novembre il Comune riusa gli stessi calendari o ne crea di nuovi? (ricontrollare)
+- [x] Dopo il 2 novembre il Comune riusa gli stessi calendari? Sì: verificato il 02/11/2026 (primaria, secondaria,
+  infanzia e nido 6–9 ordinari hanno il menu invernale dal 2/11), gli ID restano validi.
+- [x] Menu invernale: in infanzia e nidi dopo i piatti c'è un punto e la merenda (es. «PANE .PIZZA AL POMODORO»).
+  `Piatti::separa()` divide pranzo e merenda (un punto seguito da «di», «con», ecc. resta un refuso nel nome);
+  l'API la restituisce in `merenda` e l'app la mostra su una riga «Merenda» (decisione dell'utente, 04/11/2026).
 - [ ] Il server Tophost riesce a scaricare i feed da `calendar.google.com`?
 - [x] Cosa mostrare quando un menu non è ancora pubblicato → messaggio «Il Comune non ha ancora pubblicato…»
   e, se c'è, la prima data disponibile.

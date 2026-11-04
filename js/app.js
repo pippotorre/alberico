@@ -85,8 +85,9 @@
     vista.focus({ preventScroll: true });
     window.scrollTo(0, 0);
   }
-  function listaPiatti(piatti) {
-    return '<ul class="piatti">' + piatti.map((p) => '<li>' + esc(p) + '</li>').join('') + '</ul>';
+  function listaPiatti(piatti, merenda) {
+    return '<ul class="piatti">' + piatti.map((p) => '<li>' + esc(p) + '</li>').join('') + '</ul>' +
+      (merenda && merenda.length ? '<p class="merenda"><strong>Merenda:</strong> ' + esc(merenda.join(', ')) + '</p>' : '');
   }
   // Testi rivolti alle famiglie quando il menu non c'è: tono formale, con il rimando alla fonte ufficiale.
   function linkUfficiale(m) {
@@ -124,7 +125,7 @@
           const r = await api('/menu/' + id + '/giorni?da=' + iso(oggi) + '&a=' + iso(piuGiorni(oggi, 13)));
           const g = r.giorni[0];
           const corpo = g
-            ? '<h3' + (g.data === iso(oggi) ? ' class="oggi"' : '') + '>' + esc(nomeGiorno(g.data)) + '</h3>' + listaPiatti(g.piatti)
+            ? '<h3' + (g.data === iso(oggi) ? ' class="oggi"' : '') + '>' + esc(nomeGiorno(g.data)) + '</h3>' + listaPiatti(g.piatti, g.merenda)
             : messaggioVuoto(m, r.prossimo);
           return scheda(m, corpo, id);
         } catch (e) {
@@ -179,7 +180,7 @@
       const r = await api('/menu/' + id + '/giorni?da=' + iso(inizio) + '&a=' + iso(fine));
       corpo = r.giorni.length
         ? r.giorni.map((g) => '<section class="scheda c-' + esc(m.fascia.colore) + '"><h3' +
-            (g.data === iso(new Date()) ? ' class="oggi"' : '') + '>' + esc(nomeGiorno(g.data)) + '</h3>' + listaPiatti(g.piatti) + '</section>').join('') +
+            (g.data === iso(new Date()) ? ' class="oggi"' : '') + '>' + esc(nomeGiorno(g.data)) + '</h3>' + listaPiatti(g.piatti, g.merenda) + '</section>').join('') +
           '<p class="fonte">Fonte: Città di Torino, ristorazione scolastica. ' + linkUfficiale(m) + '</p>'
         : messaggioVuoto(m, r.prossimo);
       aggiornato(r.menu.aggiornato);

@@ -90,7 +90,7 @@ final class Importer
         $this->pdo->prepare('DELETE FROM buonapp_giorni WHERE menu_id = ?')->execute([$menuId]);
         $ins = $this->pdo->prepare('INSERT INTO buonapp_giorni (menu_id, data, piatti, testo) VALUES (?, ?, ?, ?)');
         foreach ($giorni as $data => $g) {
-            $piatti = json_encode(Piatti::daTesto($g['testo']), JSON_UNESCAPED_UNICODE);
+            $piatti = json_encode(Piatti::separa($g['testo'])['pranzo'], JSON_UNESCAPED_UNICODE);
             $ins->execute([$menuId, $data, $piatti, $g['testo']]);
         }
         $this->pdo->prepare('UPDATE buonapp_menu SET ultimo_import = ?, ultimo_errore = NULL WHERE id = ?')

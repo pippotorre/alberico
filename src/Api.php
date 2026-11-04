@@ -60,12 +60,13 @@ final class Api
             return [404, ['errore' => 'Menu non trovato']];
         }
 
-        $g = $pdo->prepare('SELECT data, piatti FROM buonapp_giorni WHERE menu_id = ? AND data BETWEEN ? AND ? ORDER BY data');
+        // Pranzo e merenda si ricavano dal testo originale: vale anche per i giorni già salvati.
+        $g = $pdo->prepare('SELECT data, testo FROM buonapp_giorni WHERE menu_id = ? AND data BETWEEN ? AND ? ORDER BY data');
         $g->execute([$menuId, $inizio->format('Y-m-d'), $fine->format('Y-m-d')]);
-        $giorni = array_map(fn($r) => [
-            'data' => $r['data'],
-            'piatti' => json_decode($r['piatti'], true),
-        ], $g->fetchAll());
+        $giorni = array_map(function ($r) {
+            $parti = Piatti::separa($r['testo']);
+            return ['data' => $r['data'], 'piatti' => $parti['pranzo'], 'merenda' => $parti['merenda']];
+        }, $g->fetchAll());
 
         // Prima data pubblicata dopo l'intervallo: serve a dire "il menu riprende il…".
         $p = $pdo->prepare('SELECT MIN(data) FROM buonapp_giorni WHERE menu_id = ? AND data > ?');

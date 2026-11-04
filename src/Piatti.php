@@ -4,6 +4,31 @@
 
 final class Piatti
 {
+    // Parole che continuano un nome dopo un punto sfuggito ("POLPETTE. DI BOVINO").
+    private const CONTINUA = ['di', 'del', 'della', 'dello', 'dei', 'delle', 'al', 'alla', 'allo', 'ai', 'alle', 'all',
+        'con', 'e', 'ed', 'in', 'a', 'da', 'su', 'per'];
+
+    /**
+     * Nel menu invernale di infanzia e nidi, dopo i piatti del pranzo c'è un punto e la merenda:
+     * "…, PANE .PIZZA AL POMODORO." → pranzo […, "Pane"], merenda ["Pizza al pomodoro"].
+     * @return array{pranzo: list<string>, merenda: list<string>}
+     */
+    public static function separa(string $testo): array
+    {
+        $testo = preg_replace('/\s+/u', ' ', $testo);
+        $offset = 0;
+        while (preg_match('/\.\s*(\p{L}+)/u', $testo, $m, PREG_OFFSET_CAPTURE, $offset)) {
+            if (!in_array(mb_strtolower($m[1][0]), self::CONTINUA, true)) {
+                return [
+                    'pranzo' => self::daTesto(substr($testo, 0, $m[0][1])),
+                    'merenda' => self::daTesto(substr($testo, $m[0][1] + 1)),
+                ];
+            }
+            $offset = $m[1][1];
+        }
+        return ['pranzo' => self::daTesto($testo), 'merenda' => []];
+    }
+
     /** @return list<string> */
     public static function daTesto(string $testo): array
     {

@@ -43,6 +43,22 @@ verifica('piatti: spazi doppi e voci vuote', $p === ['Brodo vegetale con pastina
 $p = Piatti::daTesto('FILETTO DI PLATESSA, COSTINE SALTATE ALL’OLIO');
 verifica('piatti: apostrofo tipografico', $p[1] === 'Costine saltate all’olio', $p);
 
+// --- Merenda del menu invernale ---
+$casi = [
+    'ZUPPA DI LENTICCHIE CON PASTA, UOVA STRAPAZZATE AL POMODORO , PATATE AL FORNO , FRUTTA DI STAGIONE , PANE .PIZZA AL POMODORO.'
+        => [['Zuppa di lenticchie con pasta', 'Uova strapazzate al pomodoro', 'Patate al forno', 'Frutta di stagione', 'Pane'], ['Pizza al pomodoro']],
+    'CREMA DI RISO CON PASSATO DI VERDURA CON BRODO VEGETALE, OMOGENEIZZATO DI BOVINO, BANANA. FRULLATO DI FRUTTA. '
+        => [['Crema di riso con passato di verdura con brodo vegetale', 'Omogeneizzato di bovino', 'Banana'], ['Frullato di frutta']],
+    'RISO OLIO E PARMIGIANO, SPEZZATINO DI VITELLO TIPO GOULASH , INSALATA VERDE CON MELA, BANANA , PANE.'
+        => [['Riso olio e parmigiano', 'Spezzatino di vitello tipo goulash', 'Insalata verde con mela', 'Banana', 'Pane'], []],
+    'PASTA ALLE ZUCCHINE, POLPETTE. DI BOVINO IN UMIDO, PANE'
+        => [['Pasta alle zucchine', 'Polpette di bovino in umido', 'Pane'], []],
+];
+foreach ($casi as $testo => [$pranzo, $merenda]) {
+    $r = Piatti::separa($testo);
+    verifica('merenda: ' . mb_substr($testo, 0, 30), $r === ['pranzo' => $pranzo, 'merenda' => $merenda], $r);
+}
+
 // --- Importer ---
 $pdo = nuovoDb();
 $scaricati = [];

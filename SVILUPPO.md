@@ -155,8 +155,24 @@ Cartella `play-store/`:
   (rigenerabili con `node play-store/grafica/genera.js`), `sicurezza-dei-dati.md`, `tester/inviti.md`.
 - `bin/crea-zip.sh` esclude `play-store/` dallo ZIP del sito.
 
-Il `.aab` da caricare e un APK di prova sono sull'iMac, in `~/Documents/EntrataDiSicurezza-Play/buonapp/` (`buonapp-1.0.0-1.aab`), insieme a
-`assetlinks.json` (copia master per `/.well-known/`) e `REGISTRO-APP.md`. Chiave e pacchetto sono stati creati lì, così la chiave non è mai passata dal cloud.
+Sull'iMac, in `~/Documents/EntrataDiSicurezza-Play/` (struttura della procedura `googleplay-store`; dal 15/11/2026 **`buonapp/` è il modello**
+per le prossime app, che avranno una cartella parallela):
+
+```
+EntrataDiSicurezza-Play/
+├── README.md, .gitignore   repository git locale (chiavi, zip e build esclusi)
+├── REGISTRO-APP.md         registro di tutte le app (condiviso)
+├── assetlinks.json         copia master per /.well-known/ (condivisa, una voce per app)
+├── chiavi/buonapp/         buonapp-upload.jks, buonapp-credenziali.txt (mai in git)
+└── buonapp/
+    ├── SVILUPPO.md         pubblicazione di buonApp
+    ├── comune/             icona-512.png, CHECKLIST-PLAY-CONSOLE.md, sicurezza-dei-dati.md, LEGGIMI.txt
+    ├── it-IT/ en-US/ fr-FR/ es-ES/ ar/   testi/*.txt e grafica/ per lingua
+    ├── privacy/buonapp/    index.html da caricare in /privacy/buonapp/
+    ├── android/            progetto TWA senza chiavi
+    ├── build/              buonapp-1.0.0-1.aab, buonapp-1.0.0-1-prova.apk
+    └── zip/                buonapp-play-store-v1.0.0.zip (comune/ + lingue)
+``` Chiave e pacchetto sono stati creati lì, così la chiave non è mai passata dal cloud.
 Sull'iMac Node è in `~/.local/node` (non nel PATH: `export PATH=$HOME/.local/node/bin:$PATH`), JDK 17 e Android SDK in `~/.bubblewrap`.
 
 ## Verifiche fatte

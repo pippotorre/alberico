@@ -8,8 +8,8 @@ prima della produzione serve un **test chiuso con almeno 12 tester per 14 giorni
 
 | Cosa | Dove |
 |---|---|
-| Pacchetto da caricare (`.aab`) | sull'iMac: `~/Documents/EntrataDiSicurezza-Play/buonapp/buonapp-1.0.0-1.aab` |
-| APK di prova, installabile a mano | sull'iMac: `~/Documents/EntrataDiSicurezza-Play/buonapp/buonapp-1.0.0-1-prova.apk` |
+| Pacchetto da caricare (`.aab`) | sull'iMac: `~/Documents/EntrataDiSicurezza-Play/buonapp/build/buonapp-1.0.0-1.aab` |
+| APK di prova, installabile a mano | sull'iMac: `~/Documents/EntrataDiSicurezza-Play/buonapp/build/buonapp-1.0.0-1-prova.apk` |
 | `assetlinks.json` master e registro delle app | sull'iMac: `~/Documents/EntrataDiSicurezza-Play/assetlinks.json` e `REGISTRO-APP.md` |
 | Chiave di caricamento e password | sul tuo Mac: `~/Documents/EntrataDiSicurezza-Play/chiavi/buonapp/` (mai nel repository) |
 | Progetto Android (Bubblewrap) | `play-store/android/` (rigenerabile: vedi in fondo) |

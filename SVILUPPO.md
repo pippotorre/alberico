@@ -141,7 +141,7 @@ Guida passo passo e risposte ai questionari: **`play-store/CHECKLIST-PLAY-CONSOL
 | Avvio della TWA | `https://www.entratadisicurezza.com/buonapp/?utm_source=twa` (in GoatCounter le visite dall'app si distinguono) |
 | Link gestiti dall'app | solo `https://www.entratadisicurezza.com/buonapp/…` (`pathPrefix`), non il resto del dominio |
 | Livello API | minSdk 24, targetSdk e compileSdk **36** |
-| SHA-256 chiave di caricamento | `73:F2:D1:54:58:DC:F8:2A:08:DD:5C:CE:9A:40:8B:26:27:45:33:CF:8C:6B:5B:BC:A8:2E:93:F3:C0:28:8C:63` |
+| SHA-256 chiave di caricamento | `96:1C:BE:D8:1F:42:E9:B2:6C:BB:23:9D:F8:CE:D9:D4:04:D5:15:2C:51:47:94:B7:5C:26:00:E8:0A:B0:B2:7F` |
 | SHA-256 firma app (Google) | da copiare da Play Console › Integrità dell'app dopo il primo caricamento |
 | Chiave di caricamento | `buonapp-upload.jks`, alias `upload`: sul Mac in `~/Documents/EntrataDiSicurezza-Play/chiavi/buonapp/`, mai nel repository |
 | Privacy | https://www.entratadisicurezza.com/privacy/buonapp/ |
@@ -154,13 +154,15 @@ Cartella `play-store/`:
   (rigenerabili con `node play-store/grafica/genera.js`), `sicurezza-dei-dati.md`, `tester/inviti.md`.
 - `bin/crea-zip.sh` esclude `play-store/` dallo ZIP del sito.
 
-Il `.aab` e un APK di prova sono nei file del progetto, in `buonapp-play-store/`.
+Il `.aab` da caricare e un APK di prova sono sull'iMac, in `~/Documents/EntrataDiSicurezza-Play/buonapp/` (`buonapp-1.0.0-1.aab`), insieme a
+`assetlinks.json` (copia master per `/.well-known/`) e `REGISTRO-APP.md`. Chiave e pacchetto sono stati creati lì, così la chiave non è mai passata dal cloud.
+Sull'iMac Node è in `~/.local/node` (non nel PATH: `export PATH=$HOME/.local/node/bin:$PATH`), JDK 17 e Android SDK in `~/.bubblewrap`.
 
 ## Verifiche fatte
 
 - 15/11/2026 – Cinque lingue provate in Chromium (telefono 360 px) con i menu veri del sito: nessun errore JavaScript, arabo con `dir="rtl"`,
   frecce e bordi specchiati, piatti in italiano isolati con `<bdi>`. Informativa privacy: una sola sezione visibile per lingua.
-- 15/11/2026 – Pacchetto Android: `jarsigner -verify` sull'`.aab` ok; APK firmato con la chiave di caricamento (SHA-256 uguale a quello sopra);
+- 15/11/2026 – Pacchetto Android (costruito sull'iMac): `jarsigner -verify` sull'`.aab` ok; APK firmato con la chiave di caricamento (SHA-256 uguale a quello sopra);
   `aapt2`: pacchetto `com.entratadisicurezza.buonapp`, targetSdk 36, nomi in it/en/fr/es/ar, `supportsRtl=true`, `pathPrefix=/buonapp/`, nessun permesso.
 - 27/10/2026 – Statistiche: prova in Chromium simulando Android con lo script di GoatCounter vero. Una visita per `/buonapp/`
   e i tre eventi di installazione inviati correttamente; nessun errore JavaScript.
@@ -176,3 +178,4 @@ Il `.aab` e un APK di prova sono nei file del progetto, in `buonapp-play-store/`
 | 27/10/2026 | Dal 19 al 30 ottobre l'app dice «non ancora pubblicato»: i calendari del Comune finiscono il 16/10, anche se l'avviso dice che si ripetono la 2ª e 3ª settimana estiva. | Comportamento corretto: si mostra il messaggio formale con il link al calendario ufficiale. |
 | 15/11/2026 | L'ambiente cloud rifiutava `dl.google.com` (SDK Android) e il sito. | Aggiunti `dl.google.com` e `www.entratadisicurezza.com` agli host consentiti dell'ambiente. |
 | 15/11/2026 | Build Bubblewrap: jcenter rinvia a `repo1.maven.org`, che risponde 429; androidbrowserhelper 2.7.4 vuole minSdk 24. | `personalizza-android.py` sostituisce jcenter con la copia Google di Maven Central + `mavenCentral()`; minSdk 24 in `twa-manifest.json`. |
+| 15/11/2026 | La chiave creata nel cloud non si poteva portare sul Mac (le istruzioni non possono contenere segreti). | Chiave e `.aab` rifatti sull'iMac con Remote Control; la chiave e il pacchetto del cloud sono stati cancellati. Sull'iMac mancavano Java, Node e SDK: installati nella cartella utente senza sudo. |

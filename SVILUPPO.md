@@ -37,6 +37,7 @@ scuola secondaria di primo grado, per tutti i menu disponibili. L'utente può sa
 | 27/10/2026 | Informativa privacy aggiornata: tolto «non utilizza strumenti di statistica», aggiunta la sezione «Statistiche di visita». Service worker `buonapp-v13`. |
 | 15/11/2026 | **Cinque lingue**: italiano (predefinita), inglese, francese, spagnolo, arabo (da destra a sinistra). Testi in `js/i18n.js`; lingua scelta dal menu nella testata, da `?lang=xx` o dal telefono, salvata sul dispositivo (`buonapp.lingua`). Fasce e diete tradotte per id; **i nomi dei piatti restano in italiano**, con una nota nel piede. Service worker `buonapp-v15`. |
 | 15/11/2026 | Informativa privacy unica in cinque lingue, generata da `docs/privacy/genera.py` in `privacy.html` e in `play-store/privacy/buonapp/index.html` (da caricare in `/privacy/buonapp/`, l'indirizzo dato a Google Play). Aggiunti: «non è un'app ufficiale della Città di Torino», minori, base giuridica delle statistiche. |
+| 15/11/2026 | Icona dello store (`play-store/grafica/icona-512.png`) rifatta da `img/padella-piatto.png` con margine: nella prima versione il cerchio bianco era tagliato. |
 | 15/11/2026 | Google Play: procedura della skill `googleplay-store`. Gratuita, senza pubblicità, **senza acquisti in app**; categoria Cibo e bevande; pubblico 18+ (genitori). Tutto in `play-store/`. |
 
 ## Fonte dei dati

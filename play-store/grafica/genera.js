@@ -217,8 +217,11 @@ async function rendi(browser, html, file, w, h) {
   const server = await avviaServer();
   const browser = await chromium.launch();
   try {
-    // Icona: quella dell'app, quadrata e a piena superficie (Google aggiunge angoli e ombra).
-    fs.copyFileSync(path.join(RADICE, 'img/icona-512.png'), path.join(USCITA, 'icona-512.png'));
+    // Icona: padella con il piatto intero su fondo giallo, con margine perché il cerchio non sia tagliato.
+    // Quadrata e a piena superficie: Google aggiunge da sé angoli arrotondati e ombra.
+    execFileSync('convert', ['-size', '512x512', 'xc:#fcbb21',
+      '(', path.join(RADICE, 'img/padella-piatto.png'), '-trim', '+repage', '-resize', '430x430', ')',
+      '-gravity', 'center', '-composite', 'PNG32:' + path.join(USCITA, 'icona-512.png')]);
 
     for (const lingua of LINGUE) {
       const dir = path.join(USCITA, lingua);

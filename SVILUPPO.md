@@ -35,6 +35,9 @@ scuola secondaria di primo grado, per tutti i menu disponibili. L'utente può sa
 | 26/10/2026 | Un feed vuoto o non scaricabile non cancella i giorni già salvati; l'errore resta in `buonapp_menu.ultimo_errore`. |
 | 27/10/2026 | **Statistiche di visita con GoatCounter** (senza cookie, nessun dato personale), account unico del dominio https://entratadisicurezza.goatcounter.com. Script in `index.html`; percorso inviato senza `index.html` (`/buonapp/`). Eventi in `js/app.js` (funzione `conta`): `buonapp-installa-clic`, `buonapp-installa-rifiutata`, `buonapp-installata` (anche installando dal menu di Chrome). Se lo script è bloccato (blocco pubblicità, offline) l'app funziona uguale. |
 | 27/10/2026 | Informativa privacy aggiornata: tolto «non utilizza strumenti di statistica», aggiunta la sezione «Statistiche di visita». Service worker `buonapp-v13`. |
+| 15/11/2026 | **Cinque lingue**: italiano (predefinita), inglese, francese, spagnolo, arabo (da destra a sinistra). Testi in `js/i18n.js`; lingua scelta dal menu nella testata, da `?lang=xx` o dal telefono, salvata sul dispositivo (`buonapp.lingua`). Fasce e diete tradotte per id; **i nomi dei piatti restano in italiano**, con una nota nel piede. Service worker `buonapp-v15`. |
+| 15/11/2026 | Informativa privacy unica in cinque lingue, generata da `docs/privacy/genera.py` in `privacy.html` e in `play-store/privacy/buonapp/index.html` (da caricare in `/privacy/buonapp/`, l'indirizzo dato a Google Play). Aggiunti: «non è un'app ufficiale della Città di Torino», minori, base giuridica delle statistiche. |
+| 15/11/2026 | Google Play: procedura della skill `googleplay-store`. Gratuita, senza pubblicità, **senza acquisti in app**; categoria Cibo e bevande; pubblico 18+ (genitori). Tutto in `play-store/`. |
 
 ## Fonte dei dati
 
@@ -125,22 +128,40 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
 4. Eseguire `migrations/002_stato.sql` e controllare `/api/v1/stato` dopo la prima apertura dell'app.
 5. Ricontrollare i calendari dopo il 2 novembre.
 
-## Play Store (piano)
+## Google Play
 
-1. Sito online in HTTPS su https://www.entratadisicurezza.com/buonapp e importazione funzionante.
-2. Pacchetto Android con PWABuilder (https://www.pwabuilder.com) o Bubblewrap partendo dall'indirizzo del sito:
-   nome del pacchetto proposto `com.entratadisicurezza.buonapp`.
-3. Caricare il file `assetlinks.json` generato in **`https://www.entratadisicurezza.com/.well-known/assetlinks.json`**
-   (alla radice del dominio, non in `/buonapp`), con l'impronta SHA-256 della chiave di firma di Google Play.
-   Senza questo file l'app mostra la barra dell'indirizzo.
-4. Scheda del Play Store: descrizione, icona 512×512, grafica in evidenza 1024×500 (c'è già il banner originale),
-   schermate del telefono, link all'informativa privacy, sezione «Sicurezza dei dati»: dal 27/10/2026 dichiarare
-   «Attività nelle app → Interazioni con l'app», raccolta per **Analisi**, non condivisa (statistiche GoatCounter, aggregate e senza identificativi).
-5. Account personale nuovo: Google chiede un periodo di test chiuso con un gruppo di tester prima della
-   produzione (verificare le regole in vigore al momento).
+Guida passo passo e risposte ai questionari: **`play-store/CHECKLIST-PLAY-CONSOLE.md`**.
+
+| Voce | Valore |
+|---|---|
+| Pacchetto | `com.entratadisicurezza.buonapp` |
+| Versione | 1.0.0 (versionCode 1), creata il 15/11/2026 |
+| Canale | Test chiuso (account personale: 12+ tester per 14 giorni), poi produzione |
+| Stato | Pacchetto pronto, da caricare in Play Console |
+| Avvio della TWA | `https://www.entratadisicurezza.com/buonapp/?utm_source=twa` (in GoatCounter le visite dall'app si distinguono) |
+| Link gestiti dall'app | solo `https://www.entratadisicurezza.com/buonapp/…` (`pathPrefix`), non il resto del dominio |
+| Livello API | minSdk 24, targetSdk e compileSdk **36** |
+| SHA-256 chiave di caricamento | `73:F2:D1:54:58:DC:F8:2A:08:DD:5C:CE:9A:40:8B:26:27:45:33:CF:8C:6B:5B:BC:A8:2E:93:F3:C0:28:8C:63` |
+| SHA-256 firma app (Google) | da copiare da Play Console › Integrità dell'app dopo il primo caricamento |
+| Chiave di caricamento | `buonapp-upload.jks`, alias `upload`: sul Mac in `~/Documents/EntrataDiSicurezza-Play/chiavi/buonapp/`, mai nel repository |
+| Privacy | https://www.entratadisicurezza.com/privacy/buonapp/ |
+| Asset Links | `play-store/assetlinks.json` → `https://www.entratadisicurezza.com/.well-known/assetlinks.json` |
+
+Cartella `play-store/`:
+- `android/` progetto Bubblewrap 1.27 (senza chiavi); dopo ogni `bubblewrap update` si rilancia `python3 play-store/personalizza-android.py play-store/android`
+  (nomi tradotti, `resConfigs`, `pathPrefix=/buonapp/`, Maven Central al posto di jcenter);
+- `scheda/<lingua>.md` testi della scheda (caratteri contati), `grafica/` icona, grafica in primo piano, 4 schermate telefono e 2 tablet per lingua
+  (rigenerabili con `node play-store/grafica/genera.js`), `sicurezza-dei-dati.md`, `tester/inviti.md`.
+- `bin/crea-zip.sh` esclude `play-store/` dallo ZIP del sito.
+
+Il `.aab` e un APK di prova sono nei file del progetto, in `buonapp-play-store/`.
 
 ## Verifiche fatte
 
+- 15/11/2026 – Cinque lingue provate in Chromium (telefono 360 px) con i menu veri del sito: nessun errore JavaScript, arabo con `dir="rtl"`,
+  frecce e bordi specchiati, piatti in italiano isolati con `<bdi>`. Informativa privacy: una sola sezione visibile per lingua.
+- 15/11/2026 – Pacchetto Android: `jarsigner -verify` sull'`.aab` ok; APK firmato con la chiave di caricamento (SHA-256 uguale a quello sopra);
+  `aapt2`: pacchetto `com.entratadisicurezza.buonapp`, targetSdk 36, nomi in it/en/fr/es/ar, `supportsRtl=true`, `pathPrefix=/buonapp/`, nessun permesso.
 - 27/10/2026 – Statistiche: prova in Chromium simulando Android con lo script di GoatCounter vero. Una visita per `/buonapp/`
   e i tre eventi di installazione inviati correttamente; nessun errore JavaScript.
 
@@ -153,3 +174,5 @@ Grafiche originali in `buonapp-grafiche/` nei file del progetto (icona, banner, 
 | 27/10/2026 | Il workflow «Importa i menu» falliva: `curl: (28) Failed to connect … port 443` (Tophost non accetta connessioni dai server di GitHub). | Aggiornamento avviato dalle visite all'app; workflow rimosso. |
 | 27/10/2026 | Dopo la prima importazione i nidi non mostravano le età e i menu risultavano «non esistenti»: il browser aveva tenuto in cache per 15 minuti la vecchia risposta vuota di `/api/v1/menu`. | API sempre con `Cache-Control: no-store`, l'app non tiene in memoria un elenco vuoto, service worker v6. |
 | 27/10/2026 | Dal 19 al 30 ottobre l'app dice «non ancora pubblicato»: i calendari del Comune finiscono il 16/10, anche se l'avviso dice che si ripetono la 2ª e 3ª settimana estiva. | Comportamento corretto: si mostra il messaggio formale con il link al calendario ufficiale. |
+| 15/11/2026 | L'ambiente cloud rifiutava `dl.google.com` (SDK Android) e il sito. | Aggiunti `dl.google.com` e `www.entratadisicurezza.com` agli host consentiti dell'ambiente. |
+| 15/11/2026 | Build Bubblewrap: jcenter rinvia a `repo1.maven.org`, che risponde 429; androidbrowserhelper 2.7.4 vuole minSdk 24. | `personalizza-android.py` sostituisce jcenter con la copia Google di Maven Central + `mavenCentral()`; minSdk 24 in `twa-manifest.json`. |

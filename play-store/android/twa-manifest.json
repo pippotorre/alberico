@@ -1,0 +1,41 @@
+{
+  "packageId": "com.entratadisicurezza.buonapp",
+  "host": "www.entratadisicurezza.com",
+  "name": "buonApp – Che si mangia oggi a scuola?",
+  "launcherName": "buonApp",
+  "display": "standalone",
+  "orientation": "default",
+  "themeColor": "#FCBB21",
+  "themeColorDark": "#FCBB21",
+  "navigationColor": "#FFFAF0",
+  "navigationColorDark": "#1B1915",
+  "navigationDividerColor": "#FFFAF0",
+  "navigationDividerColorDark": "#1B1915",
+  "backgroundColor": "#FCBB21",
+  "enableNotifications": false,
+  "startUrl": "/buonapp/?utm_source=twa",
+  "iconUrl": "https://www.entratadisicurezza.com/buonapp/img/icona-512.png",
+  "maskableIconUrl": "https://www.entratadisicurezza.com/buonapp/img/icona-maskable-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "../chiavi/buonapp/buonapp-upload.jks",
+    "alias": "upload"
+  },
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://www.entratadisicurezza.com/buonapp/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": false,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://www.entratadisicurezza.com/buonapp/",
+  "minSdkVersion": 24,
+  "appVersion": "1.0.0",
+  "additionalTrustedOrigins": []
+}

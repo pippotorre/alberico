@@ -1,11 +1,12 @@
 // Service worker di buonApp: l'app si apre anche senza rete e mostra l'ultimo menu visto.
 // Cambiare VERSIONE a ogni rilascio che modifica i file dell'interfaccia.
-const VERSIONE = 'buonapp-v14';
+const VERSIONE = 'buonapp-v15';
 const GUSCIO = [
   './',
   'index.html',
   'privacy.html',
   'css/app.css',
+  'js/i18n.js',
   'js/app.js',
   'manifest.webmanifest',
   'img/icona-192.png',
@@ -49,7 +50,8 @@ self.addEventListener('fetch', (ev) => {
 
   // Interfaccia: prima la cache, intanto si aggiorna in sottofondo.
   ev.respondWith(
-    caches.match(req).then((inCache) => {
+    // Le pagine si cercano senza parametri: l'app Android parte da ?utm_source=twa, i link con la lingua da ?lang=xx.
+    caches.match(req, { ignoreSearch: req.mode === 'navigate' }).then((inCache) => {
       const rete = fetch(req)
         .then((r) => {
           if (r.ok) {

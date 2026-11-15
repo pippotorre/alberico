@@ -56,23 +56,26 @@
       <img src="img/icona-192.png" alt="" width="56" height="56">
       <span>
         <strong>buonApp</strong>
-        <small>Che si mangia oggi a scuola?</small>
+        <small data-i18n="slogan">Che si mangia oggi a scuola?</small>
       </span>
     </a>
+    <select id="lingua" class="lingua" data-i18n-attr="aria-label:lingua" aria-label="Lingua"></select>
   </header>
 
   <main id="vista" tabindex="-1" aria-live="polite">
-    <p class="caricamento">Carico i menu…</p>
+    <p class="caricamento" data-i18n="carico">Carico i menu…</p>
   </main>
 
   <footer class="piede">
-    <p>Menu della ristorazione scolastica della Città di Torino, presi dai calendari pubblicati dal Comune.
+    <p data-i18n="piede">Menu della ristorazione scolastica della Città di Torino, presi dai calendari pubblicati dal Comune.
       In caso di dubbio vale quanto comunicato dalla scuola.</p>
+    <p data-i18n="piattiInItaliano" data-i18n-vuoto hidden></p>
     <p id="aggiornato"></p>
-    <p id="installa" hidden><button type="button" class="installa">Installa l’app sul telefono</button></p>
-    <p><a href="privacy.html">Informativa privacy</a></p>
+    <p id="installa" hidden><button type="button" class="installa" data-i18n="installa">Installa l’app sul telefono</button></p>
+    <p><a href="privacy.html" data-i18n="privacy">Informativa privacy</a></p>
   </footer>
 
+  <script src="js/i18n.js"></script>
   <script src="js/app.js" defer></script>
 </body>
 </html>

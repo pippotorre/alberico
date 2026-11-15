@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.entratadisicurezza.buonapp",
+      "sha256_cert_fingerprints": [
+        "SOSTITUIRE_CON_SHA256_FIRMA_APP_DI_GOOGLE_PLAY",
+        "73:F2:D1:54:58:DC:F8:2A:08:DD:5C:CE:9A:40:8B:26:27:45:33:CF:8C:6B:5B:BC:A8:2E:93:F3:C0:28:8C:63"
+      ]
+    }
+  }
+]

@@ -6,6 +6,9 @@
   const MAX_PREFERITI = 2;
   const CHIAVE_PREFERITI = 'buonapp.preferiti';
   const vista = document.getElementById('vista');
+  const L = window.buonappLingua; // testi nella lingua scelta (js/i18n.js)
+  const t = L.t;
+  L.applica();
 
   let elenco = null; // risposta di /menu, caricata una volta
 
@@ -26,8 +29,8 @@
   let preferiti = leggiPreferiti();
 
   // --- Date ---
-  const fmtGiorno = new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
-  const fmtBreve = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'short' });
+  const fmtGiorno = new Intl.DateTimeFormat(L.locale, { weekday: 'long', day: 'numeric', month: 'long' });
+  const fmtBreve = new Intl.DateTimeFormat(L.locale, { day: 'numeric', month: 'short' });
   function iso(d) {
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   }
@@ -47,8 +50,8 @@
     const oggi = iso(new Date());
     const domani = iso(piuGiorni(new Date(), 1));
     const testo = fmtGiorno.format(daIso(s));
-    if (s === oggi) return 'Oggi, ' + testo;
-    if (s === domani) return 'Domani, ' + testo;
+    if (s === oggi) return t('oggi', { giorno: testo });
+    if (s === domani) return t('domani', { giorno: testo });
     return testo.charAt(0).toUpperCase() + testo.slice(1);
   }
 
@@ -86,30 +89,30 @@
     window.scrollTo(0, 0);
   }
   function listaPiatti(piatti, merenda) {
-    return '<ul class="piatti">' + piatti.map((p) => '<li>' + esc(p) + '</li>').join('') + '</ul>' +
-      (merenda && merenda.length ? '<p class="merenda"><strong>Merenda:</strong> ' + esc(merenda.join(', ')) + '</p>' : '');
+    // I piatti restano in italiano: <bdi> li tiene in ordine anche nella pagina in arabo.
+    return '<ul class="piatti">' + piatti.map((p) => '<li><bdi lang="it">' + esc(p) + '</bdi></li>').join('') + '</ul>' +
+      (merenda && merenda.length ? '<p class="merenda"><strong>' + esc(t('merenda')) + '</strong> <bdi lang="it">' + esc(merenda.join(', ')) + '</bdi></p>' : '');
   }
   // Testi rivolti alle famiglie quando il menu non c'è: tono formale, con il rimando alla fonte ufficiale.
   function linkUfficiale(m) {
-    return '<a href="' + esc(m.dieta.calendario) + '" target="_blank" rel="noopener">Vai al calendario ufficiale</a>';
+    return '<a href="' + esc(m.dieta.calendario) + '" target="_blank" rel="noopener">' + esc(t('calendarioUfficiale')) + '</a>';
   }
   function messaggioVuoto(m, prossimo) {
-    let t = 'Il menu per questi giorni non è ancora stato pubblicato dalla Città di Torino. ' +
-      'Sarà disponibile in questa pagina non appena verrà reso noto.';
-    if (prossimo) t += ' Il primo menu già pubblicato è quello di ' + esc(fmtGiorno.format(daIso(prossimo))) + '.';
-    return '<div class="vuoto"><p>' + t + '</p><p>' + linkUfficiale(m) + '</p></div>';
+    let testo = esc(t('nonPubblicato'));
+    if (prossimo) testo += ' ' + esc(t('primoPubblicato', { giorno: fmtGiorno.format(daIso(prossimo)) }));
+    return '<div class="vuoto"><p>' + testo + '</p><p>' + linkUfficiale(m) + '</p></div>';
   }
   function messaggioErrore(m) {
-    return '<div class="vuoto"><p>Non è stato possibile caricare il menu. Si prega di verificare la connessione e di riprovare.</p>' +
+    return '<div class="vuoto"><p>' + esc(t('erroreMenu')) + '</p>' +
       '<p>' + linkUfficiale(m) + '</p></div>';
   }
 
   // --- Viste ---
   const GRUPPI = [
-    { href: '#/nidi', nome: 'Nidi d’infanzia', nota: '6–9, 9–12 e 12–36 mesi', colore: 'rosso' },
-    { href: '#/fascia/infanzia', nome: 'Scuole d’infanzia', nota: '3–6 anni', colore: 'verde' },
-    { href: '#/fascia/primaria', nome: 'Scuole primarie', nota: 'Elementari', colore: 'giallo' },
-    { href: '#/fascia/secondaria', nome: 'Scuole secondarie', nota: 'Medie', colore: 'acqua' },
+    { href: '#/nidi', id: 'nidi', colore: 'rosso' },
+    { href: '#/fascia/infanzia', id: 'infanzia', colore: 'verde' },
+    { href: '#/fascia/primaria', id: 'primaria', colore: 'giallo' },
+    { href: '#/fascia/secondaria', id: 'secondaria', colore: 'acqua' },
   ];
 
   async function home() {
@@ -132,29 +135,29 @@
           return scheda(m, messaggioErrore(m), id);
         }
       }));
-      html += '<h1>I tuoi menu</h1>' + schede.join('');
-      html += '<h2>Altri menu</h2>';
+      html += '<h1>' + esc(t('tuoiMenu')) + '</h1>' + schede.join('');
+      html += '<h2>' + esc(t('altriMenu')) + '</h2>';
     } else {
-      html += '<h1>Scegli il menu</h1><p class="sotto">Puoi salvare fino a due menu preferiti: li troverai qui ogni volta che apri buonApp.</p>';
+      html += '<h1>' + esc(t('scegliMenu')) + '</h1><p class="sotto">' + esc(t('scegliMenuNota')) + '</p>';
     }
     html += '<ul class="scelte">' + GRUPPI.map((g) =>
-      '<li><a class="scelta c-' + g.colore + '" href="' + g.href + '"><span>' + esc(g.nome) + '<small>' + esc(g.nota) + '</small></span></a></li>'
+      '<li><a class="scelta c-' + g.colore + '" href="' + g.href + '"><span>' + esc(L.gruppo(g.id)[0]) + '<small>' + esc(L.gruppo(g.id)[1]) + '</small></span></a></li>'
     ).join('') + '</ul>';
     mostra(html);
   }
 
   function scheda(m, corpo, id) {
     return '<section class="scheda c-' + esc(m.fascia.colore) + '">' +
-      '<h2>' + esc(m.fascia.nome) + ' · ' + esc(m.dieta.nome) + '</h2>' + corpo +
-      '<div class="azioni"><a href="#/menu/' + id + '">Tutta la settimana</a></div></section>';
+      '<h2>' + esc(L.fascia(m.fascia)) + ' · ' + esc(L.dieta(m.dieta)) + '</h2>' + corpo +
+      '<div class="azioni"><a href="#/menu/' + id + '">' + esc(t('tuttaSettimana')) + '</a></div></section>';
   }
 
   async function nidi() {
     await caricaElenco();
     const fasce = elenco.fasce.filter((f) => f.id.startsWith('nido-'));
-    mostra('<a class="indietro" href="#/">Home</a><h1>Nidi d’infanzia</h1><p class="sotto">Scegli l’età del bambino o della bambina.</p>' +
+    mostra('<a class="indietro" href="#/">' + esc(t('home')) + '</a><h1>' + esc(L.gruppo('nidi')[0]) + '</h1><p class="sotto">' + esc(t('scegliEta')) + '</p>' +
       '<ul class="scelte">' + fasce.map((f) =>
-        '<li><a class="scelta c-' + esc(f.colore) + '" href="#/fascia/' + esc(f.id) + '">' + esc(f.nome) + '</a></li>'
+        '<li><a class="scelta c-' + esc(f.colore) + '" href="#/fascia/' + esc(f.id) + '">' + esc(L.fascia(f)) + '</a></li>'
       ).join('') + '</ul>');
   }
 
@@ -163,9 +166,9 @@
     const f = elenco.fasce.find((x) => x.id === id);
     if (!f) return nonTrovato();
     const indietro = id.startsWith('nido-') ? '#/nidi' : '#/';
-    mostra('<a class="indietro" href="' + indietro + '">Indietro</a><h1>' + esc(f.nome) + '</h1><p class="sotto">Scegli la dieta.</p>' +
+    mostra('<a class="indietro" href="' + indietro + '">' + esc(t('indietro')) + '</a><h1>' + esc(L.fascia(f)) + '</h1><p class="sotto">' + esc(t('scegliDieta')) + '</p>' +
       '<ul class="scelte">' + f.diete.map((d) =>
-        '<li><a class="scelta c-' + esc(f.colore) + '" href="#/menu/' + d.menu + '">' + esc(d.nome) + '</a></li>'
+        '<li><a class="scelta c-' + esc(f.colore) + '" href="#/menu/' + d.menu + '">' + esc(L.dieta(d)) + '</a></li>'
       ).join('') + '</ul>');
   }
 
@@ -181,33 +184,32 @@
       corpo = r.giorni.length
         ? r.giorni.map((g) => '<section class="scheda c-' + esc(m.fascia.colore) + '"><h3' +
             (g.data === iso(new Date()) ? ' class="oggi"' : '') + '>' + esc(nomeGiorno(g.data)) + '</h3>' + listaPiatti(g.piatti, g.merenda) + '</section>').join('') +
-          '<p class="fonte">Fonte: Città di Torino, ristorazione scolastica. ' + linkUfficiale(m) + '</p>'
+          '<p class="fonte">' + esc(t('fonte')) + ' ' + linkUfficiale(m) + '</p>'
         : messaggioVuoto(m, r.prossimo);
       aggiornato(r.menu.aggiornato);
     } catch (e) {
       corpo = messaggioErrore(m);
     }
     const preferito = preferiti.includes(id);
-    mostra('<a class="indietro" href="#/fascia/' + esc(m.fascia.id) + '">Indietro</a>' +
-      '<h1>' + esc(m.fascia.nome) + '</h1><p class="sotto">' + esc(m.dieta.nome) + '</p>' +
+    mostra('<a class="indietro" href="#/fascia/' + esc(m.fascia.id) + '">' + esc(t('indietro')) + '</a>' +
+      '<h1>' + esc(L.fascia(m.fascia)) + '</h1><p class="sotto">' + esc(L.dieta(m.dieta)) + '</p>' +
       '<p><button type="button" class="preferito" aria-pressed="' + preferito + '" data-menu="' + id + '">' +
-      (preferito ? '★ Nei preferiti' : '☆ Aggiungi ai preferiti') + '</button></p>' +
+      esc(t(preferito ? 'neiPreferiti' : 'aggiungiPreferiti')) + '</button></p>' +
       '<p id="msg-preferiti" class="avviso" hidden></p>' +
-      '<nav class="settimana-nav" aria-label="Settimana">' +
-        '<a class="bottone" href="#/menu/' + id + '/' + iso(piuGiorni(inizio, -7)) + '" aria-label="Settimana precedente">‹</a>' +
+      '<nav class="settimana-nav" aria-label="' + esc(t('settimana')) + '">' +
+        '<a class="bottone" href="#/menu/' + id + '/' + iso(piuGiorni(inizio, -7)) + '" aria-label="' + esc(t('settimanaPrecedente')) + '">' + (L.rtl ? '›' : '‹') + '</a>' +
         '<strong>' + esc(fmtBreve.format(inizio)) + ' – ' + esc(fmtBreve.format(fine)) + '</strong>' +
-        '<a class="bottone" href="#/menu/' + id + '/' + iso(piuGiorni(inizio, 7)) + '" aria-label="Settimana successiva">›</a>' +
+        '<a class="bottone" href="#/menu/' + id + '/' + iso(piuGiorni(inizio, 7)) + '" aria-label="' + esc(t('settimanaSuccessiva')) + '">' + (L.rtl ? '‹' : '›') + '</a>' +
       '</nav>' + corpo);
   }
 
   function nonTrovato() {
-    mostra('<a class="indietro" href="#/">Home</a><p class="vuoto">Il menu richiesto non è disponibile. ' +
-      'Si prega di tornare alla pagina iniziale e di sceglierne un altro.</p>');
+    mostra('<a class="indietro" href="#/">' + esc(t('home')) + '</a><p class="vuoto">' + esc(t('nonTrovato')) + '</p>');
   }
 
   function aggiornato(quando) {
     const el = document.getElementById('aggiornato');
-    if (el && quando) el.textContent = 'Menu aggiornato il ' + new Date(quando.replace(' ', 'T')).toLocaleString('it-IT', { dateStyle: 'long', timeStyle: 'short' }) + '.';
+    if (el && quando) el.textContent = t('aggiornato', { quando: new Date(quando.replace(' ', 'T')).toLocaleString(L.locale, { dateStyle: 'long', timeStyle: 'short' }) });
   }
 
   // Aggiunge o toglie un preferito; con due preferiti già salvati chiede di toglierne uno.
@@ -220,7 +222,7 @@
       preferiti = preferiti.filter((x) => x !== id);
     } else if (preferiti.length >= MAX_PREFERITI) {
       msg.hidden = false;
-      msg.textContent = 'Hai già due menu preferiti. Apri uno dei due e toglilo, poi aggiungi questo.';
+      msg.textContent = t('troppiPreferiti');
       return;
     } else {
       preferiti = preferiti.concat(id);
@@ -228,7 +230,7 @@
     salvaPreferiti(preferiti);
     const on = preferiti.includes(id);
     b.setAttribute('aria-pressed', String(on));
-    b.textContent = on ? '★ Nei preferiti' : '☆ Aggiungi ai preferiti';
+    b.textContent = t(on ? 'neiPreferiti' : 'aggiungiPreferiti');
     msg.hidden = true;
   });
 
@@ -242,7 +244,7 @@
         await settimana(Number(parti[1]), /^\d{4}-\d{2}-\d{2}$/.test(parti[2] || '') ? parti[2] : null);
       } else await home();
     } catch (e) {
-      mostra('<p class="vuoto">Non è stato possibile caricare i menu. Si prega di verificare la connessione e di riprovare tra qualche minuto.</p>');
+      mostra('<p class="vuoto">' + esc(t('erroreMenuTutti')) + '</p>');
     }
   }
   window.addEventListener('hashchange', vai);

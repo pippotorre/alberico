@@ -68,6 +68,25 @@ a { color: inherit; }
 .marchio strong { display: block; font: 400 1.75rem/1.1 "Black Ops One", system-ui, sans-serif; color: #b8292d; }
 .marchio small { display: block; font: 400 1.05rem/1.3 "Emilys Candy", system-ui, sans-serif; }
 
+/* Scelta della lingua, nell'angolo della testata. */
+.lingua {
+  position: absolute;
+  inset-block-start: calc(10px + env(safe-area-inset-top));
+  inset-inline-end: 12px;
+  font: inherit;
+  font-size: .85rem;
+  min-height: 36px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgb(31 29 26 / .35);
+  background: rgb(255 255 255 / .75);
+  color: #1f1d1a;
+}
+.lingua:focus-visible { outline: 3px solid #1f1d1a; outline-offset: 2px; }
+/* Con la scelta della lingua accanto, il marchio lascia libero l'angolo. */
+.marchio { margin-block-start: 34px; }
+@media (min-width: 480px) { .marchio { margin-block-start: 0; } }
+
 main {
   max-width: 640px;
   margin: 0 auto;
@@ -88,6 +107,7 @@ h2 { font-size: 1.1rem; margin: 24px 0 8px; }
   text-decoration: none;
 }
 .indietro::before { content: "← "; }
+[dir="rtl"] .indietro::before { content: "→ "; }
 
 /* Pulsanti per scegliere il menu: grandi, colorati come le strisce del banner. */
 .scelte { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
@@ -100,11 +120,12 @@ h2 { font-size: 1.1rem; margin: 24px 0 8px; }
   border-radius: var(--raggio);
   background: var(--carta);
   border: 1px solid var(--bordo);
-  border-left: 10px solid var(--colore, var(--arancio));
+  border-inline-start: 10px solid var(--colore, var(--arancio));
   text-decoration: none;
   font-weight: 600;
 }
 .scelta::after { content: "›"; font-size: 1.5rem; color: var(--testo-tenue); }
+[dir="rtl"] .scelta::after { content: "‹"; }
 .scelta small { display: block; font-weight: 400; color: var(--testo-tenue); }
 
 .c-rosso { --colore: var(--rosso); }
@@ -124,7 +145,7 @@ h2 { font-size: 1.1rem; margin: 24px 0 8px; }
 .scheda h2 { margin: 0; font-size: 1rem; color: var(--testo-tenue); font-weight: 600; }
 .scheda h3 { margin: 4px 0 8px; font-size: 1.15rem; }
 .scheda .oggi { color: var(--oggi); }
-.piatti { margin: 0; padding-left: 1.2em; }
+.piatti { margin: 0; padding-inline-start: 1.2em; }
 .piatti li { margin: 2px 0; }
 .merenda { margin: 8px 0 0; padding-top: 6px; border-top: 1px dashed var(--bordo); }
 .scheda .azioni { margin-top: 10px; display: flex; gap: 16px; flex-wrap: wrap; }

@@ -6,3 +6,11 @@ src/config.php
 *.sqlite
 !tests/schema_sqlite.sql
 dist/
+
+# Chiavi di firma Android: solo sul Mac, mai nel repository
+*.jks
+*.keystore
+play-store/chiavi/
+*credenziali*.txt
+play-store/android/app/build/
+play-store/android/.gradle/
